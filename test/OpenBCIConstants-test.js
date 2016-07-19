@@ -751,18 +751,12 @@ describe('OpenBCIConstants', function() {
             assert.equal(250, k.OBCISampleRate250);
         });
     });
-    describe("Radio Channel Limits", function() {
-        it("should get the right channel number max",function () {
-            expect(k.OBCIRadioChannelMax).to.be.equal(25);
+    describe('Time sync sizes', function() {
+        it('Array size should be 10',function () {
+            assert.equal(10, k.OBCITimeSyncArraySize);
         });
-        it("should get the right channel number min",function () {
-            expect(k.OBCIRadioChannelMin).to.be.equal(0);
-        });
-        it("should get the right poll time max",function () {
-            expect(k.OBCIRadioPollTimeMax).to.be.equal(255);
-        });
-        it("should get the right poll time min",function () {
-            expect(k.OBCIRadioPollTimeMin).to.be.equal(0);
+        it('Time sync period should be 60 seconds',function () {
+            assert.equal(60, k.OBCITimeSyncPeriodSeconds);
         });
     });
     describe('#getChannelSetter', function() {

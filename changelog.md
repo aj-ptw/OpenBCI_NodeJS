@@ -11,6 +11,14 @@
 
 # 1.0.0
 
+### New Features
+
+* Add optional parameters to `syncClocks` function: `autoSync` and `period`, to automatically send sync commands to the board every period.
+
+### Bug Fixes
+
+# 1.0.0
+
 The second major release for the OpenBCI Node.js SDK brings major changes, improvements and stability, on top of a push to increase automated test coverage.
 
 ### New Features
@@ -22,7 +30,7 @@ The second major release for the OpenBCI Node.js SDK brings major changes, impro
 * `eot` event that is emitted when a user sends a command that results in an EOT ("$$$") being sent from the board
 * Daisy (16 channel) support
 * Simulator overhaul, it completely mocks the board. Can now simulate board failure, where the board stops talking to the dongle. Can also mock a serial port failure.
-* `error` and `close` events from serialport now emtted events users can subscribe to.
+* `error` and `close` events from serialport now emitted events users can subscribe to.
 
 ### Breaking Changes
 

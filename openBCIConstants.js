@@ -310,8 +310,9 @@ const OBCIRadioChannelMin   = 0;
 const OBCIRadioPollTimeMax  = 255;
 const OBCIRadioPollTimeMin  = 0;
 
-/** Time sync array size */
+/** Time sync sizes */
 const OBCITimeSyncArraySize = 10;
+const OBCITimeSyncPeriodSeconds = 60;
 
 /** Baud Rates */
 const OBCIRadioBaudRateDefault      = 115200;
@@ -845,8 +846,9 @@ module.exports = {
     OBCIRadioChannelMin,
     OBCIRadioPollTimeMax,
     OBCIRadioPollTimeMin,
-    /** Time sync array size */
+    /** Time sync sizes */
     OBCITimeSyncArraySize,
+    OBCITimeSyncPeriodSeconds,
     /** Baud Rates */
     OBCIRadioBaudRateDefault,
     OBCIRadioBaudRateDefaultStr,

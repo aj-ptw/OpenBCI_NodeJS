@@ -239,17 +239,6 @@ describe('openbci-sdk',function() {
             });
             expect(ourBoard2.options.simulatorSerialPortFailure).to.be.true;
         });
-        it('should be able to enter sync mode', function() {
-            var ourBoard1 = new openBCIBoard.OpenBCIBoard({
-                timeSync: true
-            });
-            expect(ourBoard1.options.timeSync).to.be.true;
-            // Verify multi case support
-            var ourBoard2 = new openBCIBoard.OpenBCIBoard({
-                timesync: true
-            });
-            expect(ourBoard2.options.timeSync).to.be.true;
-        });
         it('can enter verbose mode', function() {
             ourBoard = new openBCIBoard.OpenBCIBoard({
                 verbose: true
@@ -2382,7 +2371,10 @@ describe('openbci-sdk',function() {
 
     describe('#hardwareValidation', function() {
         this.timeout(20000); // long timeout for pleanty of stream time :)
-        var runHardwareValidation = masterPortName !== k.OBCISimulatorPortName;
+        var runHardwareValidation = true;
+        if (masterPortName === k.OBCISimulatorPortName) {
+            runHardwareValidation = false;
+        };
         var wstream;
         var board;
         before(function(done) {

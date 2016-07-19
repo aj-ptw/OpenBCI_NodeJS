@@ -82,10 +82,10 @@ function OpenBCIFactory() {
      *                  setting and this sample rate will be used. (Default is `250`)
      *
      *     - `simulatorSerialPortFailure` {Boolean} - Simulates not being able to open a serial connection. Most likely
-     *                  due to a OpenBCI dongle not being plugged in.
+     *                  due to a OpenBCI dongle not being plugged in. (Default `false`)
      *
      *     - `timeSync` - {Boolean} Syncs the module up with an SNTP time server. Syncs the board on startup
-     *                  with the SNTP time. Adds a time stamp to the AUX channels.
+     *                  with the SNTP time. Adds a time stamp to the AUX channels. (Default `false`)
      *
      *     - `verbose` {Boolean} - Print out useful debugging events
      *
@@ -164,6 +164,7 @@ function OpenBCIFactory() {
         this._lowerChannelsSampleObject = null;
         this.sync = {
             active: false,
+            timer: null,
             timeGotPacketSent: 0,
             timeLastBoardTime: 0,
             timeGotSetPacket: 0,
@@ -1526,11 +1527,15 @@ function OpenBCIFactory() {
      * @description Send the command to tell the board to start the syncing protocol. Must be connected,
      *      streaming and using version +2 firmware.
      *      **Note**: This functionality requires OpenBCI Firmware Version 2.0
+     * @param `autoSync` {Boolean} (optional) - Automatically send the time sync command every period.
+     *      Default `false`
+     * @param `period` {Number} (optional) - The interval to send sync commands to board in seconds.
+     *      Default `60` seconds
      * @since 1.0.0
      * @returns {Promise} - Resolves if sent, rejects if not connected or using firmware verison +2.
      * @author AJ Keller (@pushtheworldllc)
      */
-    OpenBCIBoard.prototype.syncClocks = function() {
+    OpenBCIBoard.prototype.syncClocks = function(autoSync,period) {
         return new Promise((resolve,reject) => {
             if (!this.connected) reject('Must be connected to the device');
             if (!this.streaming) reject('Must be streaming to sync clocks');

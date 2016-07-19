@@ -350,8 +350,9 @@ Board optional configurations.
   * `50Hz` - 50Hz line noise [Europe]
   * `None` - Do not inject line noise.
 * `simulatorSampleRate` {Number} - The sample rate to use for the simulator. Simulator will set to 125 if `simulatorDaisyModuleAttached` is set `true`. However, setting this option overrides that setting and this sample rate will be used. (Default is `250`)
-* `simulatorSerialPortFailure` {Boolean} - Simulates not being able to open a serial connection. Most likely due to a OpenBCI dongle not being plugged in.
-* `timeSync` - {Boolean} Syncs the module up with an SNTP time server. Syncs the board on startup with the SNTP time. Adds a time stamp to the AUX channels.
+* `simulatorSerialPortFailure` {Boolean} - Simulates not being able to open a serial connection. Most likely due to a OpenBCI dongle not being plugged in. (Default `false`)
+* `timeSync` - {Boolean} Syncs the module up with an SNTP time server. Syncs the board on startup with the SNTP time. Adds a time stamp to the AUX channels. (Default `false`)
+* `timeSyncPeriod` {Number} - The period between syncing with the board in seconds. (Default `60` seconds)
 * `verbose` {Boolean} - Print out useful debugging events
 
 **Note, we have added support for either all lowercase OR camel case for the options, use whichever style you prefer.**
