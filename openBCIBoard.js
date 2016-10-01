@@ -1327,7 +1327,6 @@ function OpenBCIFactory() {
             if (this.options.verbose) console.log('pInput: ' + pInput + ' nInput: ' + nInput);
             // Get impedance settings to send the board
             k.getImpedanceSetter(channelNumber,pInput,nInput).then((commandsArray) => {
-                console.log(commandsArray);
                 this.write(commandsArray);
                 //delayInMS += commandsArray.length * k.OBCIWriteIntervalDelayMSLong;
                 delayInMS += this.commandsToWrite * k.OBCIWriteIntervalDelayMSShort; // Account for commands waiting to be sent in the write buffer
