@@ -1,3 +1,9 @@
+# 1.3.3
+
+### Bug Fixes
+
+* Fixed log statement on impedance setting function
+
 # 1.3.2
 
 ### Enhancements
