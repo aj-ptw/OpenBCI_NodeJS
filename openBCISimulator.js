@@ -8,24 +8,23 @@ var openBCISample = require('./openBCISample');
 var k = openBCISample.k;
 var now = require('performance-now');
 
-
-function OpenBCISimulatorFactory() {
+function OpenBCISimulatorFactory () {
   var factory = this;
 
   var _options = {
     accel: true,
     alpha: true,
-    boardFailure:false,
+    boardFailure: false,
     daisy: false,
     drift: 0,
     firmwareVersion: k.OBCIFirmwareV1,
     lineNoise: '60Hz',
     sampleRate: 250,
-    serialPortFailure:false,
+    serialPortFailure: false,
     verbose: false
   };
 
-  function OpenBCISimulator(portName, options) {
+  function OpenBCISimulator (portName, options) {
     options = (typeof options !== 'function') && options || {};
     var opts = {};
 
@@ -60,7 +59,7 @@ function OpenBCISimulatorFactory() {
     // Bools
     this.connected = false;
     this.sd = {
-      active:false,
+      active: false,
       startTime: 0
     };
     this.streaming = false;
@@ -89,35 +88,34 @@ function OpenBCISimulatorFactory() {
       this.emit('open');
       this.connected = true;
     }, 200);
-
   }
 
   // This allows us to use the emitter class freely outside of the module
   util.inherits(OpenBCISimulator, stream.Stream);
 
-  OpenBCISimulator.prototype.flush = function() {
+  OpenBCISimulator.prototype.flush = function () {
     this.buffer.fill(0);
-    //if (this.options.verbose) console.log('flushed');
+  // if (this.options.verbose) console.log('flushed')
   };
 
-  OpenBCISimulator.prototype.write = function(data,callback) {
+  OpenBCISimulator.prototype.write = function (data, callback) {
     switch (data[0]) {
       case k.OBCIRadioKey:
-      this._processPrivateRadioMessage(data);
-      break;
+        this._processPrivateRadioMessage(data);
+        break;
       case k.OBCIStreamStart:
-      if (!this.stream) this._startStream();
-      this.streaming = true;
-      break;
+        if (!this.stream) this._startStream();
+        this.streaming = true;
+        break;
       case k.OBCIStreamStop:
-      if (this.stream) clearInterval(this.stream); // Stops the stream
-      this.streaming = false;
-      break;
+        if (this.stream) clearInterval(this.stream); // Stops the stream
+        this.streaming = false;
+        break;
       case k.OBCIMiscSoftReset:
-      if (this.stream) clearInterval(this.stream);
-      this.streaming = false;
-      this.emit('data', new Buffer(`OpenBCI V3 Simulator\nOn Board ADS1299 Device ID: 0x12345\n${this.options.daisy ? "On Daisy ADS1299 Device ID: 0xFFFFF\n" : ""}LIS3DH Device ID: 0x38422\n${this.options.firmware === k.OBCIFirmwareV2 ? "Firmware: v2.0.0\n" : ""}$$$`));
-      break;
+        if (this.stream) clearInterval(this.stream);
+        this.streaming = false;
+        this.emit('data', new Buffer(`OpenBCI V3 Simulator On Board ADS1299 Device ID: 0x12345 ${this.options.daisy ? `On Daisy ADS1299 Device ID: 0xFFFFF\n` : ``} LIS3DH Device ID: 0x38422 ${this.options.firmware === k.OBCIFirmwareV2 ? `Firmware: v2.0.0\n` : ``}$$$`));
+        break;
       case k.OBCISDLogForHour1:
       case k.OBCISDLogForHour2:
       case k.OBCISDLogForHour4:
@@ -127,52 +125,52 @@ function OpenBCISimulatorFactory() {
       case k.OBCISDLogForMin15:
       case k.OBCISDLogForMin30:
       case k.OBCISDLogForSec14:
-      // If we are not streaming, then do verbose output
-      if (!this.streaming) {
-        this.emit('data', new Buffer('Wiring is correct and a card is present.\nCorresponding SD file OBCI_69.TXT\n$$$'));
-      }
-      this.sd.active = true;
-      this.sd.startTime = now();
-      break;
-      case k.OBCISDLogStop:
-      if (!this.streaming) {
-        if (this.SDLogActive) {
-          this.emit('data', new Buffer(`Total Elapsed Time: ${now() - this.sd.startTime} ms\n`));
-          this.emit('data', new Buffer(`Max write time: ${Math.random()*500} us\n`));
-          this.emit('data', new Buffer(`Min write time: ${Math.random()*200} us\n`));
-          this.emit('data', new Buffer(`Overruns: 0\n`));
-          this._printEOT();
-        } else {
-          this.emit('data', new Buffer('No open file to close\n'));
-          this._printEOT();
+        // If we are not streaming, then do verbose output
+        if (!this.streaming) {
+          this.emit('data', new Buffer('Wiring is correct and a card is present.\nCorresponding SD file OBCI_69.TXT\n$$$'));
         }
-      }
-      this.SDLogActive = false;
-      break;
+        this.sd.active = true;
+        this.sd.startTime = now();
+        break;
+      case k.OBCISDLogStop:
+        if (!this.streaming) {
+          if (this.SDLogActive) {
+            this.emit('data', new Buffer(`Total Elapsed Time: ${now() - this.sd.startTime} ms`));
+            this.emit('data', new Buffer(`Max write time: ${Math.random() * 500} us`));
+            this.emit('data', new Buffer(`Min write time: ${Math.random() * 200} us`));
+            this.emit('data', new Buffer(`Overruns: 0`));
+            this._printEOT();
+          } else {
+            this.emit('data', new Buffer('No open file to close\n'));
+            this._printEOT();
+          }
+        }
+        this.SDLogActive = false;
+        break;
       case k.OBCISyncTimeSet:
-      if (this.options.firmwareVersion === k.OBCIFirmwareV2) {
-        this.synced = true;
-        setTimeout(() => {
-          this.emit('data', new Buffer(k.OBCISyncTimeSent));
-          this._syncUp();
-        }, 10);
-      }
-      break;
+        if (this.options.firmwareVersion === k.OBCIFirmwareV2) {
+          this.synced = true;
+          setTimeout(() => {
+            this.emit('data', new Buffer(k.OBCISyncTimeSent));
+            this._syncUp();
+          }, 10);
+        }
+        break;
       default:
-      break;
+        break;
     }
 
     /** Handle Callback */
     if (this.connected) {
-      callback(null,'Success!');
+      callback(null, 'Success!');
     }
   };
 
-  OpenBCISimulator.prototype.drain = function(callback) {
+  OpenBCISimulator.prototype.drain = function (callback) {
     callback();
   };
 
-  OpenBCISimulator.prototype.close = function(callback) {
+  OpenBCISimulator.prototype.close = function (callback) {
     if (this.connected) {
       this.emit('close');
     }
@@ -180,7 +178,7 @@ function OpenBCISimulatorFactory() {
     callback();
   };
 
-  OpenBCISimulator.prototype._startStream = function() {
+  OpenBCISimulator.prototype._startStream = function () {
     var intervalInMS = 1000 / this.options.sampleRate;
 
     if (intervalInMS < 2) intervalInMS = 2;
@@ -190,9 +188,9 @@ function OpenBCISimulatorFactory() {
         if (this.synced) {
           if (this.sendSyncSetPacket) {
             this.sendSyncSetPacket = false;
-            return openBCISample.convertSampleToPacketAccelTimeSyncSet(this.sampleGenerator(sampNumber),now().toFixed(0));
+            return openBCISample.convertSampleToPacketAccelTimeSyncSet(this.sampleGenerator(sampNumber), now().toFixed(0));
           } else {
-            return openBCISample.convertSampleToPacketAccelTimeSynced(this.sampleGenerator(sampNumber),now().toFixed(0));
+            return openBCISample.convertSampleToPacketAccelTimeSynced(this.sampleGenerator(sampNumber), now().toFixed(0));
           }
         } else {
           return openBCISample.convertSampleToPacketStandard(this.sampleGenerator(sampNumber));
@@ -201,14 +199,13 @@ function OpenBCISimulatorFactory() {
         if (this.synced) {
           if (this.sendSyncSetPacket) {
             this.sendSyncSetPacket = false;
-            return openBCISample.convertSampleToPacketRawAuxTimeSyncSet(this.sampleGenerator(sampNumber),now().toFixed(0),new Buffer([0,0,0,0,0,0]));
+            return openBCISample.convertSampleToPacketRawAuxTimeSyncSet(this.sampleGenerator(sampNumber), now().toFixed(0), new Buffer([0, 0, 0, 0, 0, 0]));
           } else {
-            return openBCISample.convertSampleToPacketRawAuxTimeSynced(this.sampleGenerator(sampNumber),now().toFixed(0),new Buffer([0,0,0,0,0,0]));
+            return openBCISample.convertSampleToPacketRawAuxTimeSynced(this.sampleGenerator(sampNumber), now().toFixed(0), new Buffer([0, 0, 0, 0, 0, 0]));
           }
         } else {
-          return openBCISample.convertSampleToPacketRawAux(this.sampleGenerator(sampNumber),new Buffer([0,0,0,0,0,0]));
+          return openBCISample.convertSampleToPacketRawAux(this.sampleGenerator(sampNumber), new Buffer([0, 0, 0, 0, 0, 0]));
         }
-
       }
     };
 
@@ -218,141 +215,141 @@ function OpenBCISimulatorFactory() {
     }, intervalInMS);
   };
 
-  OpenBCISimulator.prototype._syncUp = function() {
+  OpenBCISimulator.prototype._syncUp = function () {
     setTimeout(() => {
       this.sendSyncSetPacket = true;
     }, 12); // 3 packets later
   };
 
   OpenBCISimulator.prototype._printEOT = function () {
-    this.emit('data', new Buffer("$$$"));
+    this.emit('data', new Buffer('$$$'));
   };
 
   OpenBCISimulator.prototype._printFailure = function () {
-    this.emit('data', new Buffer("Failure: "));
+    this.emit('data', new Buffer('Failure: '));
   };
 
   OpenBCISimulator.prototype._printSuccess = function () {
-    this.emit('data', new Buffer("Success: "));
+    this.emit('data', new Buffer('Success: '));
   };
 
   OpenBCISimulator.prototype._printValidatedCommsTimeout = function () {
     this._printFailure();
-    this.emit('data', new Buffer("Communications timeout - Device failed to poll Host"));
+    this.emit('data', new Buffer('Communications timeout - Device failed to poll Host'));
     this._printEOT();
   };
 
-  OpenBCISimulator.prototype._processPrivateRadioMessage = function(dataBuffer) {
+  OpenBCISimulator.prototype._processPrivateRadioMessage = function (dataBuffer) {
     switch (dataBuffer[1]) {
       case k.OBCIRadioCmdChannelGet:
-      if (this.options.firmwareVersion === k.OBCIFirmwareV2) {
-        if (!this.options.boardFailure) {
-          this._printSuccess();
-          this.emit('data', new Buffer(`Host and Device on Channel Number ${this.channelNumber}`));
-          this.emit('data', new Buffer([this.channelNumber]));
-          this._printEOT();
-        } else if (!this.serialPortFailure) {
-          this._printFailure();
-          this.emit('data', new Buffer(`Host on Channel Number ${this.channelNumber}`));
-          this.emit('data', new Buffer([this.channelNumber]));
-          this._printEOT();
-        }
-      }
-      break;
-      case k.OBCIRadioCmdChannelSet:
-      if (this.options.firmwareVersion === k.OBCIFirmwareV2) {
-        if (!this.options.boardFailure) {
-          if (dataBuffer[2] < k.OBCIRadioChannelMax) {
-            this.channelNumber = dataBuffer[2];
-            this.hostChannelNumber = this.channelNumber;
+        if (this.options.firmwareVersion === k.OBCIFirmwareV2) {
+          if (!this.options.boardFailure) {
             this._printSuccess();
-            this.emit('data', new Buffer(`Channel Number ${this.channelNumber}`));
+            this.emit('data', new Buffer(`Host and Device on Channel Number ${this.channelNumber}`));
             this.emit('data', new Buffer([this.channelNumber]));
+            this._printEOT();
+          } else if (!this.serialPortFailure) {
+            this._printFailure();
+            this.emit('data', new Buffer(`Host on Channel Number ${this.channelNumber}`));
+            this.emit('data', new Buffer([this.channelNumber]));
+            this._printEOT();
+          }
+        }
+        break;
+      case k.OBCIRadioCmdChannelSet:
+        if (this.options.firmwareVersion === k.OBCIFirmwareV2) {
+          if (!this.options.boardFailure) {
+            if (dataBuffer[2] < k.OBCIRadioChannelMax) {
+              this.channelNumber = dataBuffer[2];
+              this.hostChannelNumber = this.channelNumber;
+              this._printSuccess();
+              this.emit('data', new Buffer(`Channel Number ${this.channelNumber}`));
+              this.emit('data', new Buffer([this.channelNumber]));
+              this._printEOT();
+            } else {
+              this._printFailure();
+              this.emit('data', new Buffer('Verify channel number is less than 25'));
+              this._printEOT();
+            }
+          } else if (!this.serialPortFailure) {
+            this._printValidatedCommsTimeout();
+          }
+        }
+        break;
+      case k.OBCIRadioCmdChannelSetOverride:
+        if (this.options.firmwareVersion === k.OBCIFirmwareV2) {
+          if (dataBuffer[2] < k.OBCIRadioChannelMax) {
+            if (dataBuffer[2] === this.channelNumber) {
+              this.options.boardFailure = false;
+            } else {
+              this.options.boardFailure = true;
+            }
+            this.hostChannelNumber = dataBuffer[2];
+            this._printSuccess();
+            this.emit('data', new Buffer(`Host override - Channel Number ${this.hostChannelNumber}`));
+            this.emit('data', new Buffer([this.hostChannelNumber]));
             this._printEOT();
           } else {
             this._printFailure();
-            this.emit('data', new Buffer("Verify channel number is less than 25"));
+            this.emit('data', new Buffer('Verify channel number is less than 25'));
             this._printEOT();
           }
-        } else if (!this.serialPortFailure) {
-          this._printValidatedCommsTimeout();
         }
-      }
-      break;
-      case k.OBCIRadioCmdChannelSetOverride:
-      if (this.options.firmwareVersion === k.OBCIFirmwareV2) {
-        if (dataBuffer[2] < k.OBCIRadioChannelMax) {
-          if (dataBuffer[2] === this.channelNumber) {
-            this.options.boardFailure = false;
-          } else {
-            this.options.boardFailure = true;
-          }
-          this.hostChannelNumber = dataBuffer[2];
-          this._printSuccess();
-          this.emit('data', new Buffer(`Host override - Channel Number ${this.hostChannelNumber}`));
-          this.emit('data', new Buffer([this.hostChannelNumber]));
-          this._printEOT();
-        } else {
-          this._printFailure();
-          this.emit('data', new Buffer("Verify channel number is less than 25"));
-          this._printEOT();
-        }
-      }
-      break;
+        break;
       case k.OBCIRadioCmdPollTimeGet:
-      if (this.options.firmwareVersion === k.OBCIFirmwareV2) {
-        if (!this.options.boardFailure) {
-          this._printSuccess();
-          this.emit('data', new Buffer(`Poll Time ${this.pollTime}`));
-          this.emit('data', new Buffer([this.pollTime]));
-          this._printEOT();
-        } else {
-          this._printValidatedCommsTimeout();
+        if (this.options.firmwareVersion === k.OBCIFirmwareV2) {
+          if (!this.options.boardFailure) {
+            this._printSuccess();
+            this.emit('data', new Buffer(`Poll Time ${this.pollTime}`));
+            this.emit('data', new Buffer([this.pollTime]));
+            this._printEOT();
+          } else {
+            this._printValidatedCommsTimeout();
+          }
         }
-      }
-      break;
+        break;
       case k.OBCIRadioCmdPollTimeSet:
-      if (this.options.firmwareVersion === k.OBCIFirmwareV2) {
-        if (!this.options.boardFailure) {
-          this.pollTime = dataBuffer[2];
-          this._printSuccess();
-          this.emit('data', new Buffer(`Poll Time ${this.pollTime}`));
-          this.emit('data', new Buffer([this.pollTime]));
-          this._printEOT();
-        } else {
-          this._printValidatedCommsTimeout();
+        if (this.options.firmwareVersion === k.OBCIFirmwareV2) {
+          if (!this.options.boardFailure) {
+            this.pollTime = dataBuffer[2];
+            this._printSuccess();
+            this.emit('data', new Buffer(`Poll Time ${this.pollTime}`));
+            this.emit('data', new Buffer([this.pollTime]));
+            this._printEOT();
+          } else {
+            this._printValidatedCommsTimeout();
+          }
         }
-      }
-      break;
+        break;
       case k.OBCIRadioCmdBaudRateSetDefault:
-      if (this.options.firmwareVersion === k.OBCIFirmwareV2) {
-        this._printSuccess();
-        this.emit('data', new Buffer("Switch your baud rate to 115200"));
-        this.emit('data', new Buffer([0x24,0x24,0x24,0xFF])); // The board really does this
-      }
-      break;
-      case k.OBCIRadioCmdBaudRateSetFast:
-      if (this.options.firmwareVersion === k.OBCIFirmwareV2) {
-        this._printSuccess();
-        this.emit('data', new Buffer("Switch your baud rate to 230400"));
-        this.emit('data', new Buffer([0x24,0x24,0x24,0xFF])); // The board really does this
-      }
-      break;
-      case k.OBCIRadioCmdSystemStatus:
-      if (this.options.firmwareVersion === k.OBCIFirmwareV2) {
-        if (!this.options.boardFailure) {
+        if (this.options.firmwareVersion === k.OBCIFirmwareV2) {
           this._printSuccess();
-          this.emit('data', new Buffer("System is Up"));
-          this._printEOT();
-        } else {
-          this._printFailure();
-          this.emit('data', new Buffer("System is Down"));
-          this._printEOT();
+          this.emit('data', new Buffer('Switch your baud rate to 115200'));
+          this.emit('data', new Buffer([0x24, 0x24, 0x24, 0xFF])); // The board really does this
         }
-      }
-      break;
+        break;
+      case k.OBCIRadioCmdBaudRateSetFast:
+        if (this.options.firmwareVersion === k.OBCIFirmwareV2) {
+          this._printSuccess();
+          this.emit('data', new Buffer('Switch your baud rate to 230400'));
+          this.emit('data', new Buffer([0x24, 0x24, 0x24, 0xFF])); // The board really does this
+        }
+        break;
+      case k.OBCIRadioCmdSystemStatus:
+        if (this.options.firmwareVersion === k.OBCIFirmwareV2) {
+          if (!this.options.boardFailure) {
+            this._printSuccess();
+            this.emit('data', new Buffer('System is Up'));
+            this._printEOT();
+          } else {
+            this._printFailure();
+            this.emit('data', new Buffer('System is Down'));
+            this._printEOT();
+          }
+        }
+        break;
       default:
-      break;
+        break;
     }
   };
 

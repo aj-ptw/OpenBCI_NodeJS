@@ -5,40 +5,40 @@
 */
 'use strict';
 /** Turning channels off */
-const obciChannelOff_1 = '1';
-const obciChannelOff_2 = '2';
-const obciChannelOff_3 = '3';
-const obciChannelOff_4 = '4';
-const obciChannelOff_5 = '5';
-const obciChannelOff_6 = '6';
-const obciChannelOff_7 = '7';
-const obciChannelOff_8 = '8';
-const obciChannelOff_9 = 'q';
-const obciChannelOff_10 = 'w';
-const obciChannelOff_11 = 'e';
-const obciChannelOff_12 = 'r';
-const obciChannelOff_13 = 't';
-const obciChannelOff_14 = 'y';
-const obciChannelOff_15 = 'u';
-const obciChannelOff_16 = 'i';
+const obciChannelOff1 = '1';
+const obciChannelOff2 = '2';
+const obciChannelOff3 = '3';
+const obciChannelOff4 = '4';
+const obciChannelOff5 = '5';
+const obciChannelOff6 = '6';
+const obciChannelOff7 = '7';
+const obciChannelOff8 = '8';
+const obciChannelOff9 = 'q';
+const obciChannelOff10 = 'w';
+const obciChannelOff11 = 'e';
+const obciChannelOff12 = 'r';
+const obciChannelOff13 = 't';
+const obciChannelOff14 = 'y';
+const obciChannelOff15 = 'u';
+const obciChannelOff16 = 'i';
 
 /** Turn channels on */
-const obciChannelOn_1 = '!';
-const obciChannelOn_2 = '@';
-const obciChannelOn_3 = '#';
-const obciChannelOn_4 = '$';
-const obciChannelOn_5 = '%';
-const obciChannelOn_6 = '^';
-const obciChannelOn_7 = '&';
-const obciChannelOn_8 = '*';
-const obciChannelOn_9 = 'Q';
-const obciChannelOn_10 = 'W';
-const obciChannelOn_11 = 'E';
-const obciChannelOn_12 = 'R';
-const obciChannelOn_13 = 'T';
-const obciChannelOn_14 = 'Y';
-const obciChannelOn_15 = 'U';
-const obciChannelOn_16 = 'I';
+const obciChannelOn1 = '!';
+const obciChannelOn2 = '@';
+const obciChannelOn3 = '#';
+const obciChannelOn4 = '$';
+const obciChannelOn5 = '%';
+const obciChannelOn6 = '^';
+const obciChannelOn7 = '&';
+const obciChannelOn8 = '*';
+const obciChannelOn9 = 'Q';
+const obciChannelOn10 = 'W';
+const obciChannelOn11 = 'E';
+const obciChannelOn12 = 'R';
+const obciChannelOn13 = 'T';
+const obciChannelOn14 = 'Y';
+const obciChannelOn15 = 'U';
+const obciChannelOn16 = 'I';
 
 /** Test Signal Control Commands
 * 1x - Voltage will be 1 * (VREFP - VREFN) / 2.4 mV
@@ -62,29 +62,29 @@ const obciChannelCmdADCTemp = '4';
 const obciChannelCmdADCTestSig = '5';
 const obciChannelCmdBiasInclude = '1';
 const obciChannelCmdBiasRemove = '0';
-const obciChannelCmdChannel_1 = '1';
-const obciChannelCmdChannel_2 = '2';
-const obciChannelCmdChannel_3 = '3';
-const obciChannelCmdChannel_4 = '4';
-const obciChannelCmdChannel_5 = '5';
-const obciChannelCmdChannel_6 = '6';
-const obciChannelCmdChannel_7 = '7';
-const obciChannelCmdChannel_8 = '8';
-const obciChannelCmdChannel_9 = 'Q';
-const obciChannelCmdChannel_10 = 'W';
-const obciChannelCmdChannel_11 = 'E';
-const obciChannelCmdChannel_12 = 'R';
-const obciChannelCmdChannel_13 = 'T';
-const obciChannelCmdChannel_14 = 'Y';
-const obciChannelCmdChannel_15 = 'U';
-const obciChannelCmdChannel_16 = 'I';
-const obciChannelCmdGain_1 = '0';
-const obciChannelCmdGain_2 = '1';
-const obciChannelCmdGain_4 = '2';
-const obciChannelCmdGain_6 = '3';
-const obciChannelCmdGain_8 = '4';
-const obciChannelCmdGain_12 = '5';
-const obciChannelCmdGain_24 = '6';
+const obciChannelCmdChannel1 = '1';
+const obciChannelCmdChannel2 = '2';
+const obciChannelCmdChannel3 = '3';
+const obciChannelCmdChannel4 = '4';
+const obciChannelCmdChannel5 = '5';
+const obciChannelCmdChannel6 = '6';
+const obciChannelCmdChannel7 = '7';
+const obciChannelCmdChannel8 = '8';
+const obciChannelCmdChannel9 = 'Q';
+const obciChannelCmdChannel10 = 'W';
+const obciChannelCmdChannel11 = 'E';
+const obciChannelCmdChannel12 = 'R';
+const obciChannelCmdChannel13 = 'T';
+const obciChannelCmdChannel14 = 'Y';
+const obciChannelCmdChannel15 = 'U';
+const obciChannelCmdChannel16 = 'I';
+const obciChannelCmdGain1 = '0';
+const obciChannelCmdGain2 = '1';
+const obciChannelCmdGain4 = '2';
+const obciChannelCmdGain6 = '3';
+const obciChannelCmdGain8 = '4';
+const obciChannelCmdGain12 = '5';
+const obciChannelCmdGain24 = '6';
 const obciChannelCmdLatch = 'X';
 const obciChannelCmdPowerOff = '1';
 const obciChannelCmdPowerOn = '0';
@@ -195,7 +195,7 @@ const obciSimulatorLineNoiseHz60 = '60Hz';
 const obciSimulatorLineNoiseHz50 = '50Hz';
 const obciSimulatorLineNoiseNone = 'None';
 
-/** Possible Sample Rates*/
+/** Possible Sample Rates */
 const obciSampleRate125 = 125;
 const obciSampleRate250 = 250;
 
@@ -292,7 +292,7 @@ const obciParseFailure = 'Failure';
 const obciParseEOT = '$$$';
 const obciParseSuccess = 'Success';
 
-/** Used in parsing incoming serial data*/
+/** Used in parsing incoming serial data */
 const obciParsingChannelSettings = 2;
 const obciParsingEOT = 4;
 const obciParsingNormal = 3;
@@ -326,22 +326,22 @@ const obciRadioBaudRateFastStr = 'fast';
 
 module.exports = {
   /** Turning channels off */
-  OBCIChannelOff_1: obciChannelOff_1,
-  OBCIChannelOff_2: obciChannelOff_2,
-  OBCIChannelOff_3: obciChannelOff_3,
-  OBCIChannelOff_4: obciChannelOff_4,
-  OBCIChannelOff_5: obciChannelOff_5,
-  OBCIChannelOff_6: obciChannelOff_6,
-  OBCIChannelOff_7: obciChannelOff_7,
-  OBCIChannelOff_8: obciChannelOff_8,
-  OBCIChannelOff_9: obciChannelOff_9,
-  OBCIChannelOff_10: obciChannelOff_10,
-  OBCIChannelOff_11: obciChannelOff_11,
-  OBCIChannelOff_12: obciChannelOff_12,
-  OBCIChannelOff_13: obciChannelOff_13,
-  OBCIChannelOff_14: obciChannelOff_14,
-  OBCIChannelOff_15: obciChannelOff_15,
-  OBCIChannelOff_16: obciChannelOff_16,
+  OBCIChannelOff1: obciChannelOff1,
+  OBCIChannelOff2: obciChannelOff2,
+  OBCIChannelOff3: obciChannelOff3,
+  OBCIChannelOff4: obciChannelOff4,
+  OBCIChannelOff5: obciChannelOff5,
+  OBCIChannelOff6: obciChannelOff6,
+  OBCIChannelOff7: obciChannelOff7,
+  OBCIChannelOff8: obciChannelOff8,
+  OBCIChannelOff9: obciChannelOff9,
+  OBCIChannelOff10: obciChannelOff10,
+  OBCIChannelOff11: obciChannelOff11,
+  OBCIChannelOff12: obciChannelOff12,
+  OBCIChannelOff13: obciChannelOff13,
+  OBCIChannelOff14: obciChannelOff14,
+  OBCIChannelOff15: obciChannelOff15,
+  OBCIChannelOff16: obciChannelOff16,
   /**
   * Purpose: To get the proper command to turn a channel off
   * @param channelNumber - A number (1-16) of the desired channel
@@ -351,52 +351,52 @@ module.exports = {
     return new Promise(function (resolve, reject) {
       switch (channelNumber) {
         case 1:
-          resolve(obciChannelOff_1);
+          resolve(obciChannelOff1);
           break;
         case 2:
-          resolve(obciChannelOff_2);
+          resolve(obciChannelOff2);
           break;
         case 3:
-          resolve(obciChannelOff_3);
+          resolve(obciChannelOff3);
           break;
         case 4:
-          resolve(obciChannelOff_4);
+          resolve(obciChannelOff4);
           break;
         case 5:
-          resolve(obciChannelOff_5);
+          resolve(obciChannelOff5);
           break;
         case 6:
-          resolve(obciChannelOff_6);
+          resolve(obciChannelOff6);
           break;
         case 7:
-          resolve(obciChannelOff_7);
+          resolve(obciChannelOff7);
           break;
         case 8:
-          resolve(obciChannelOff_8);
+          resolve(obciChannelOff8);
           break;
         case 9:
-          resolve(obciChannelOff_9);
+          resolve(obciChannelOff9);
           break;
         case 10:
-          resolve(obciChannelOff_10);
+          resolve(obciChannelOff10);
           break;
         case 11:
-          resolve(obciChannelOff_11);
+          resolve(obciChannelOff11);
           break;
         case 12:
-          resolve(obciChannelOff_12);
+          resolve(obciChannelOff12);
           break;
         case 13:
-          resolve(obciChannelOff_13);
+          resolve(obciChannelOff13);
           break;
         case 14:
-          resolve(obciChannelOff_14);
+          resolve(obciChannelOff14);
           break;
         case 15:
-          resolve(obciChannelOff_15);
+          resolve(obciChannelOff15);
           break;
         case 16:
-          resolve(obciChannelOff_16);
+          resolve(obciChannelOff16);
           break;
         default:
           reject('Error [commandChannelOff]: Invalid Channel Number');
@@ -405,72 +405,72 @@ module.exports = {
     });
   },
   /** Turning channels on */
-  OBCIChannelOn_1: obciChannelOn_1,
-  OBCIChannelOn_2: obciChannelOn_2,
-  OBCIChannelOn_3: obciChannelOn_3,
-  OBCIChannelOn_4: obciChannelOn_4,
-  OBCIChannelOn_5: obciChannelOn_5,
-  OBCIChannelOn_6: obciChannelOn_6,
-  OBCIChannelOn_7: obciChannelOn_7,
-  OBCIChannelOn_8: obciChannelOn_8,
-  OBCIChannelOn_9: obciChannelOn_9,
-  OBCIChannelOn_10: obciChannelOn_10,
-  OBCIChannelOn_11: obciChannelOn_11,
-  OBCIChannelOn_12: obciChannelOn_12,
-  OBCIChannelOn_13: obciChannelOn_13,
-  OBCIChannelOn_14: obciChannelOn_14,
-  OBCIChannelOn_15: obciChannelOn_15,
-  OBCIChannelOn_16: obciChannelOn_16,
+  OBCIChannelOn1: obciChannelOn1,
+  OBCIChannelOn2: obciChannelOn2,
+  OBCIChannelOn3: obciChannelOn3,
+  OBCIChannelOn4: obciChannelOn4,
+  OBCIChannelOn5: obciChannelOn5,
+  OBCIChannelOn6: obciChannelOn6,
+  OBCIChannelOn7: obciChannelOn7,
+  OBCIChannelOn8: obciChannelOn8,
+  OBCIChannelOn9: obciChannelOn9,
+  OBCIChannelOn10: obciChannelOn10,
+  OBCIChannelOn11: obciChannelOn11,
+  OBCIChannelOn12: obciChannelOn12,
+  OBCIChannelOn13: obciChannelOn13,
+  OBCIChannelOn14: obciChannelOn14,
+  OBCIChannelOn15: obciChannelOn15,
+  OBCIChannelOn16: obciChannelOn16,
   commandChannelOn: function (channelNumber) {
     return new Promise(function (resolve, reject) {
       switch (channelNumber) {
         case 1:
-          resolve(obciChannelOn_1);
+          resolve(obciChannelOn1);
           break;
         case 2:
-          resolve(obciChannelOn_2);
+          resolve(obciChannelOn2);
           break;
         case 3:
-          resolve(obciChannelOn_3);
+          resolve(obciChannelOn3);
           break;
         case 4:
-          resolve(obciChannelOn_4);
+          resolve(obciChannelOn4);
           break;
         case 5:
-          resolve(obciChannelOn_5);
+          resolve(obciChannelOn5);
           break;
         case 6:
-          resolve(obciChannelOn_6);
+          resolve(obciChannelOn6);
           break;
         case 7:
-          resolve(obciChannelOn_7);
+          resolve(obciChannelOn7);
           break;
         case 8:
-          resolve(obciChannelOn_8);
+          resolve(obciChannelOn8);
           break;
         case 9:
-          resolve(obciChannelOn_9);
+          resolve(obciChannelOn9);
           break;
         case 10:
-          resolve(obciChannelOn_10);
+          resolve(obciChannelOn10);
           break;
         case 11:
-          resolve(obciChannelOn_11);
+          resolve(obciChannelOn11);
           break;
         case 12:
-          resolve(obciChannelOn_12);
+          resolve(obciChannelOn12);
           break;
         case 13:
-          resolve(obciChannelOn_13);
+          resolve(obciChannelOn13);
           break;
         case 14:
-          resolve(obciChannelOn_14);
+          resolve(obciChannelOn14);
           break;
         case 15:
-          resolve(obciChannelOn_15);
+          resolve(obciChannelOn15);
           break;
         case 16:
-          resolve(obciChannelOn_16);
+          resolve(obciChannelOn16);
           break;
         default:
           reject('Error [commandChannelOn]: Invalid Channel Number');
@@ -526,30 +526,30 @@ module.exports = {
   OBCIChannelCmdADCTestSig: obciChannelCmdADCTestSig,
   OBCIChannelCmdBiasInclude: obciChannelCmdBiasInclude,
   OBCIChannelCmdBiasRemove: obciChannelCmdBiasRemove,
-  OBCIChannelCmdChannel_1: obciChannelCmdChannel_1,
-  OBCIChannelCmdChannel_2: obciChannelCmdChannel_2,
-  OBCIChannelCmdChannel_3: obciChannelCmdChannel_3,
-  OBCIChannelCmdChannel_4: obciChannelCmdChannel_4,
-  OBCIChannelCmdChannel_5: obciChannelCmdChannel_5,
-  OBCIChannelCmdChannel_6: obciChannelCmdChannel_6,
-  OBCIChannelCmdChannel_7: obciChannelCmdChannel_7,
-  OBCIChannelCmdChannel_8: obciChannelCmdChannel_8,
-  OBCIChannelCmdChannel_9: obciChannelCmdChannel_9,
-  OBCIChannelCmdChannel_10: obciChannelCmdChannel_10,
-  OBCIChannelCmdChannel_11: obciChannelCmdChannel_11,
-  OBCIChannelCmdChannel_12: obciChannelCmdChannel_12,
-  OBCIChannelCmdChannel_13: obciChannelCmdChannel_13,
-  OBCIChannelCmdChannel_14: obciChannelCmdChannel_14,
-  OBCIChannelCmdChannel_15: obciChannelCmdChannel_15,
-  OBCIChannelCmdChannel_16: obciChannelCmdChannel_16,
+  OBCIChannelCmdChannel1: obciChannelCmdChannel1,
+  OBCIChannelCmdChannel2: obciChannelCmdChannel2,
+  OBCIChannelCmdChannel3: obciChannelCmdChannel3,
+  OBCIChannelCmdChannel4: obciChannelCmdChannel4,
+  OBCIChannelCmdChannel5: obciChannelCmdChannel5,
+  OBCIChannelCmdChannel6: obciChannelCmdChannel6,
+  OBCIChannelCmdChannel7: obciChannelCmdChannel7,
+  OBCIChannelCmdChannel8: obciChannelCmdChannel8,
+  OBCIChannelCmdChannel9: obciChannelCmdChannel9,
+  OBCIChannelCmdChannel10: obciChannelCmdChannel10,
+  OBCIChannelCmdChannel11: obciChannelCmdChannel11,
+  OBCIChannelCmdChannel12: obciChannelCmdChannel12,
+  OBCIChannelCmdChannel13: obciChannelCmdChannel13,
+  OBCIChannelCmdChannel14: obciChannelCmdChannel14,
+  OBCIChannelCmdChannel15: obciChannelCmdChannel15,
+  OBCIChannelCmdChannel16: obciChannelCmdChannel16,
   commandChannelForCmd,
-  OBCIChannelCmdGain_1: obciChannelCmdGain_1,
-  OBCIChannelCmdGain_2: obciChannelCmdGain_2,
-  OBCIChannelCmdGain_4: obciChannelCmdGain_4,
-  OBCIChannelCmdGain_6: obciChannelCmdGain_6,
-  OBCIChannelCmdGain_8: obciChannelCmdGain_8,
-  OBCIChannelCmdGain_12: obciChannelCmdGain_12,
-  OBCIChannelCmdGain_24: obciChannelCmdGain_24,
+  OBCIChannelCmdGain1: obciChannelCmdGain1,
+  OBCIChannelCmdGain2: obciChannelCmdGain2,
+  OBCIChannelCmdGain4: obciChannelCmdGain4,
+  OBCIChannelCmdGain6: obciChannelCmdGain6,
+  OBCIChannelCmdGain8: obciChannelCmdGain8,
+  OBCIChannelCmdGain12: obciChannelCmdGain12,
+  OBCIChannelCmdGain24: obciChannelCmdGain24,
   commandForGain,
   OBCIChannelCmdLatch: obciChannelCmdLatch,
   OBCIChannelCmdPowerOff: obciChannelCmdPowerOff,
@@ -836,7 +836,7 @@ module.exports = {
   OBCIParseFirmware: obciParseFirmware,
   OBCIParseEOT: obciParseEOT,
   OBCIParseSuccess: obciParseSuccess,
-  /** Used in parsing incoming serial data*/
+  /** Used in parsing incoming serial data */
   OBCIParsingChannelSettings: obciParsingChannelSettings,
   OBCIParsingEOT: obciParsingEOT,
   OBCIParsingNormal: obciParsingNormal,
@@ -891,7 +891,6 @@ module.exports = {
 * @returns {Promise} resolves array of commands to be sent, rejects on bad input or no board
 */
 function channelSetter (channelNumber, powerDown, gain, inputType, bias, srb2, srb1) {
-
   // Used to store and assemble the commands
   var cmdPowerDown,
     cmdBias,
@@ -1047,25 +1046,25 @@ function commandForGain (gainSetting) {
   return new Promise(function (resolve, reject) {
     switch (gainSetting) {
       case 1:
-        resolve(obciChannelCmdGain_1);
+        resolve(obciChannelCmdGain1);
         break;
       case 2:
-        resolve(obciChannelCmdGain_2);
+        resolve(obciChannelCmdGain2);
         break;
       case 4:
-        resolve(obciChannelCmdGain_4);
+        resolve(obciChannelCmdGain4);
         break;
       case 6:
-        resolve(obciChannelCmdGain_6);
+        resolve(obciChannelCmdGain6);
         break;
       case 8:
-        resolve(obciChannelCmdGain_8);
+        resolve(obciChannelCmdGain8);
         break;
       case 12:
-        resolve(obciChannelCmdGain_12);
+        resolve(obciChannelCmdGain12);
         break;
       case 24:
-        resolve(obciChannelCmdGain_24);
+        resolve(obciChannelCmdGain24);
         break;
       default:
         reject('Invalid gain setting of ' + gainSetting + ' tisk tisk, gain must be (1,2,4,6,8,12,24)');
@@ -1078,52 +1077,52 @@ function commandChannelForCmd (channelNumber) {
   return new Promise(function (resolve, reject) {
     switch (channelNumber) {
       case 1:
-        resolve(obciChannelCmdChannel_1);
+        resolve(obciChannelCmdChannel1);
         break;
       case 2:
-        resolve(obciChannelCmdChannel_2);
+        resolve(obciChannelCmdChannel2);
         break;
       case 3:
-        resolve(obciChannelCmdChannel_3);
+        resolve(obciChannelCmdChannel3);
         break;
       case 4:
-        resolve(obciChannelCmdChannel_4);
+        resolve(obciChannelCmdChannel4);
         break;
       case 5:
-        resolve(obciChannelCmdChannel_5);
+        resolve(obciChannelCmdChannel5);
         break;
       case 6:
-        resolve(obciChannelCmdChannel_6);
+        resolve(obciChannelCmdChannel6);
         break;
       case 7:
-        resolve(obciChannelCmdChannel_7);
+        resolve(obciChannelCmdChannel7);
         break;
       case 8:
-        resolve(obciChannelCmdChannel_8);
+        resolve(obciChannelCmdChannel8);
         break;
       case 9:
-        resolve(obciChannelCmdChannel_9);
+        resolve(obciChannelCmdChannel9);
         break;
       case 10:
-        resolve(obciChannelCmdChannel_10);
+        resolve(obciChannelCmdChannel10);
         break;
       case 11:
-        resolve(obciChannelCmdChannel_11);
+        resolve(obciChannelCmdChannel11);
         break;
       case 12:
-        resolve(obciChannelCmdChannel_12);
+        resolve(obciChannelCmdChannel12);
         break;
       case 13:
-        resolve(obciChannelCmdChannel_13);
+        resolve(obciChannelCmdChannel13);
         break;
       case 14:
-        resolve(obciChannelCmdChannel_14);
+        resolve(obciChannelCmdChannel14);
         break;
       case 15:
-        resolve(obciChannelCmdChannel_15);
+        resolve(obciChannelCmdChannel15);
         break;
       case 16:
-        resolve(obciChannelCmdChannel_16);
+        resolve(obciChannelCmdChannel16);
         break;
       default:
         reject('Invalid channel number');
