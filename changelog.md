@@ -1,8 +1,17 @@
-# 1.3.3
+# 1.4.0
+
+### New Features
+
+* Add `timeOffsetMaster` to object emitted when bad time sync.
+
+### Enhancements
+
+* Implement and adapt semi-standard code style. Closes #83
 
 ### Bug Fixes
 
 * Fixed log statement on impedance setting function
+* Remove event emitter with time sync on reject of sync clock full
 
 # 1.3.2
 
