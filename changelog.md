@@ -3,6 +3,8 @@
 ### Bug Fixes
 
 * Fixed log statement on impedance setting function
+* Add `timeOffsetMaster` to object emitted when bad time sync.
+* Remove event emitter with time sync on reject of sync clock full
 
 # 1.3.2
 
