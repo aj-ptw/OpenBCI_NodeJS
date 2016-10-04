@@ -5,6 +5,7 @@ var openBCISample = require('../openBCISample');
 var chai = require('chai');
 var expect = chai.expect;
 var assert = chai.assert;
+var should = chai.should(); // eslint-disable-line no-unused-vars
 
 var chaiAsPromised = require('chai-as-promised');
 var sinonChai = require('sinon-chai');
@@ -1320,8 +1321,8 @@ $$$`);
       var buf4 = openBCISample.samplePacket(3);
 
       var bufferLength = buf1.length + buf2.length + buf3.length + buf4.length;
-      var buffer;
-      buffer = new Buffer.concat([buf1, buf2, buf3, buf4], bufferLength);
+      /* eslint new-cap: ["error", { "properties": false }] */
+      var buffer = new Buffer.concat([buf1, buf2, buf3, buf4], bufferLength);
       expect(openBCISample.isTimeSyncSetConfirmationInBuffer(buffer)).to.be.true;
     });
     it('should find the character in a buffer packed with samples with comma at end', function () {
@@ -1331,6 +1332,7 @@ $$$`);
       var buf4 = new Buffer([0x2C]);
 
       var bufferLength = buf1.length + buf2.length + buf3.length + buf4.length;
+      /* eslint new-cap: ["error", { "properties": false }] */
       var buffer = new Buffer.concat([buf1, buf2, buf3, buf4], bufferLength);
       expect(openBCISample.isTimeSyncSetConfirmationInBuffer(buffer)).to.be.true;
     });
@@ -1340,6 +1342,7 @@ $$$`);
       var buf3 = openBCISample.samplePacket(3);
 
       var bufferLength = buf1.length + buf2.length + buf3.length;
+      /* eslint new-cap: ["error", { "properties": false }] */
       var buffer = new Buffer.concat([buf1, buf2, buf3], bufferLength);
       expect(openBCISample.isTimeSyncSetConfirmationInBuffer(buffer)).to.be.false;
     });

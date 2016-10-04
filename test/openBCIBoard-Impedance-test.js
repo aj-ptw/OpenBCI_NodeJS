@@ -1,4 +1,5 @@
 var chai = require('chai');
+var should = chai.should(); // eslint-disable-line no-unused-vars
 var openBCIBoard = require('../openBCIBoard');
 var openBCISample = openBCIBoard.OpenBCISample;
 var k = openBCISample.k;

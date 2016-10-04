@@ -1,6 +1,7 @@
 var sinon = require('sinon');
 var chai = require('chai');
 var expect = chai.expect;
+var should = chai.should(); // eslint-disable-line no-unused-vars
 var openBCIBoard = require('../openBCIBoard');
 var openBCISample = openBCIBoard.OpenBCISample;
 var k = openBCISample.k;

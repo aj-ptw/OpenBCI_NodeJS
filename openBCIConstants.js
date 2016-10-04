@@ -856,7 +856,7 @@ module.exports = {
   OBCITimeSyncArraySize: obciTimeSyncArraySize,
   OBCITimeSyncMultiplierWithSyncConf: obciTimeSyncMultiplierWithSyncConf,
   OBCITimeSyncMultiplierWithoutSyncConf: obciTimeSyncMultiplierWithoutSyncConf,
-  obciTimeSyncThresholdTransFailureMS,
+  OBCITimeSyncThresholdTransFailureMS: obciTimeSyncThresholdTransFailureMS,
   /** Baud Rates */
   OBCIRadioBaudRateDefault: obciRadioBaudRateDefault,
   OBCIRadioBaudRateDefaultStr: obciRadioBaudRateDefaultStr,

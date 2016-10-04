@@ -5,7 +5,7 @@
   "main": "openBCIBoard",
   "scripts": {
     "start": "node index",
-    "test": "semistandard && mocha test",
+    "test": "semistandard | snazzy && mocha test",
     "test-cov": "istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec && codecov"
   },
   "keywords": [
@@ -35,7 +35,8 @@
     "sandboxed-module": "^2.0.3",
     "semistandard": "^9.0.0",
     "sinon": "^1.17.2",
-    "sinon-chai": "^2.8.0"
+    "sinon-chai": "^2.8.0",
+    "snazzy": "^5.0.0"
   },
   "repository": {
     "type": "git",
@@ -57,7 +58,8 @@
       "after",
       "afterEach",
       "it",
-      "expect"
+      "expect",
+      "should"
     ]
   }
 }

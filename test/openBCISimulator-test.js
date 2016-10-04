@@ -2,6 +2,7 @@ var bufferEqual = require('buffer-equal');
 var chai = require('chai');
 var chaiAsPromised = require(`chai-as-promised`);
 var expect = chai.expect;
+var should = chai.should(); // eslint-disable-line no-unused-vars
 var openBCISimulator = require('../openBCISimulator');
 var openBCISample = require('../openBCISample');
 var k = openBCISample.k;
