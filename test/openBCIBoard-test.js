@@ -606,7 +606,7 @@ describe('openbci-sdk', function () {
       it('should call the write function with proper command for channel 1', function (done) {
         ourBoard.channelOff(1).then(() => {
           setTimeout(() => {
-            spy.should.have.been.calledWith(k.OBCIChannelOff_1);
+            spy.should.have.been.calledWith(k.OBCIChannelOff1);
             done();
           }, 5 * k.OBCIWriteIntervalDelayMSShort);
         });
@@ -616,7 +616,7 @@ describe('openbci-sdk', function () {
 
         ourBoard.channelOff(16).then(() => {
           setTimeout(() => {
-            spy.should.have.been.calledWith(k.OBCIChannelOff_16);
+            spy.should.have.been.calledWith(k.OBCIChannelOff16);
             done();
           }, 5 * k.OBCIWriteIntervalDelayMSShort);
         });
@@ -627,7 +627,7 @@ describe('openbci-sdk', function () {
       it('should turn the realBoard channel off', function (done) {
         ourBoard.channelOff(1).then(() => {
           setTimeout(() => {
-            spy.should.have.been.calledWith(k.OBCIChannelOff_1);
+            spy.should.have.been.calledWith(k.OBCIChannelOff1);
             done();
           }, 5 * k.OBCIWriteIntervalDelayMSShort);
         });
@@ -648,7 +648,7 @@ describe('openbci-sdk', function () {
       it('should call the write function with proper command for channel 2', function (done) {
         ourBoard.channelOn(2).then(() => {
           setTimeout(() => {
-            spy.should.have.been.calledWith(k.OBCIChannelOn_2);
+            spy.should.have.been.calledWith(k.OBCIChannelOn2);
             done();
           }, 5 * k.OBCIWriteIntervalDelayMSShort);
         });
@@ -656,7 +656,7 @@ describe('openbci-sdk', function () {
       it('should call the write function with proper command for channel 16', function (done) {
         ourBoard.channelOn(16).then(() => {
           setTimeout(() => {
-            spy.should.have.been.calledWith(k.OBCIChannelOn_16);
+            spy.should.have.been.calledWith(k.OBCIChannelOn16);
             done();
           }, 5 * k.OBCIWriteIntervalDelayMSShort);
         });
