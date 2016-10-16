@@ -7,30 +7,43 @@
 *   then `npm start`
 */
 
-var OpenBCIBoard = require('openbci').OpenBCIBoard;
+var openbci = require('openbci');
+var OpenBCIBoard = openbci.OpenBCIBoard;
+var k = openbci.OpenBCIConstants;
 
-var ourBoard = new OpenBCIBoard({});
+var ourBoard = new OpenBCIBoard({
+  simulatorFirmwareVersion: 'v2'
+});
 
 var sampleRate = 250; // Default to 250, ALWAYS verify with a call to `.sampleRate()` after 'ready' event!
 var timeSyncPossible = false;
 
-ourBoard.autoFindOpenBCIBoard().then(portName => {
-  if (portName) {
-    /**
-    * Connect to the board with portName
-    * i.e. ourBoard.connect(portName).....
-    */
-    // Call to connect
-    ourBoard.connect(portName).then(() => {
-      console.log(`connected`);
-    })
-      .catch(err => {
-        console.log(`connect: ${err}`);
-      });
-  } else {
-    /** Unable to auto find OpenBCI board */
-  }
-});
+var useSim = true;
+
+if (useSim) {
+  ourBoard.connect(k.OBCISimulatorPortName).then(() => {
+    console.log(`connected`);
+  })
+} else {
+  ourBoard.autoFindOpenBCIBoard().then(portName => {
+    if (portName) {
+      /**
+      * Connect to the board with portName
+      * i.e. ourBoard.connect(portName).....
+      */
+      // Call to connect
+      ourBoard.connect(portName).then(() => {
+        console.log(`connected`);
+      })
+        .catch(err => {
+          console.log(`connect: ${err}`);
+        });
+    } else {
+      /** Unable to auto find OpenBCI board */
+    }
+  });
+}
+
 
 var readyFunc = () => {
   // Get the sample rate after 'ready'

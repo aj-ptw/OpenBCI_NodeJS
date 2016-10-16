@@ -1774,10 +1774,20 @@ function OpenBCIFactory () {
       }
     } else if (this.impedanceTest.onChannel !== 0) {
       // Only calculate impedance for one channel
-      impedanceArray = openBCISample.goertzelProcessSample(sampleObject, this.goertzelObject);
-      if (impedanceArray) {
-        this.impedanceTest.impedanceForChannel = impedanceArray[this.impedanceTest.onChannel - 1];
-      }
+      // Goertzel method
+      // impedanceArray = openBCISample.goertzelProcessSample(sampleObject, this.goertzelObject);
+      // if (impedanceArray) {
+      //   this.impedanceTest.impedanceForChannel = impedanceArray[this.impedanceTest.onChannel - 1];
+      // }
+
+      // Chip Auduet Method
+      openBCISample.impedanceCalculationForChannel(sampleObject, this.impedanceTest.onChannel)
+        .then((impedanceValue) => {
+          this.impedanceTest.impedanceForChannel = impedanceValue;
+        })
+        .catch((err) => {
+          console.error(err);
+        });
     }
   };
 
