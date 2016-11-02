@@ -765,6 +765,9 @@ describe('OpenBCIConstants', function () {
       assert.equal(125, k.OBCISampleRate125);
     });
     it('should be 250', function () {
+      assert.equal(200, k.OBCISampleRate200);
+    });
+    it('should be 250', function () {
       assert.equal(250, k.OBCISampleRate250);
     });
   });
@@ -1434,6 +1437,9 @@ describe('OpenBCIConstants', function () {
     });
   });
   describe('Emitters', function () {
+    it('Event Emitter BLE Powered On', function () {
+      assert.equal('blePoweredOn', k.OBCIEmitterBlePoweredOn);
+    });
     it('Event Emitter Close', function () {
       assert.equal('close', k.OBCIEmitterClose);
     });
@@ -1443,8 +1449,14 @@ describe('OpenBCIConstants', function () {
     it('Event Emitter Error', function () {
       assert.equal('error', k.OBCIEmitterError);
     });
+    it('Event Emitter Ganglion Found', function () {
+      assert.equal('ganglionFound', k.OBCIEmitterGanglionFound);
+    });
     it('Event Emitter Impedance Array', function () {
       assert.equal('impedanceArray', k.OBCIEmitterImpedanceArray);
+    });
+    it('Event Emitter Message', function () {
+      assert.equal('message', k.OBCIEmitterMessage);
     });
     it('Event Emitter Query', function () {
       assert.equal('query', k.OBCIEmitterQuery);
@@ -1459,7 +1471,187 @@ describe('OpenBCIConstants', function () {
       assert.equal('sample', k.OBCIEmitterSample);
     });
   });
-  describe('Errors', function () {
-
+  describe('Ganglion', function () {
+    describe('Commands', function () {
+      it('Connect', function () {
+        assert.equal('c', k.OBCITcpCmdConnect);
+      });
+      it('Command', function () {
+        assert.equal('k', k.OBCITcpCmdCommand);
+      });
+      it('Data', function () {
+        assert.equal('t', k.OBCITcpCmdData);
+      });
+      it('Disconnect', function () {
+        assert.equal('d', k.OBCITcpCmdDisconnect);
+      });
+      it('Error', function () {
+        assert.equal('e', k.OBCITcpCmdError);
+      });
+      it('Impedance', function () {
+        assert.equal('z', k.OBCITcpCmdImpedance);
+      });
+      it('Log', function () {
+        assert.equal('l', k.OBCITcpCmdLog);
+      });
+      it('Scan', function () {
+        assert.equal('s', k.OBCITcpCmdScan);
+      });
+      it('Status', function () {
+        assert.equal('q', k.OBCITcpCmdStatus);
+      });
+    });
+    describe('Codes', function () {
+      it('Bad packet data', function () {
+        assert.equal(500, k.OBCITcpCodeBadPacketData);
+      });
+      it('Good', function () {
+        assert.equal(200, k.OBCITcpCodeSuccess);
+      });
+      it('Already connected', function () {
+        assert.equal(408, k.OBCITcpCodeErrorAlreadyConnected);
+      });
+      it('Command not recognized', function () {
+        assert.equal(406, k.OBCITcpCodeErrorCommandNotRecognized);
+      });
+      it('Device not found', function () {
+        assert.equal(405, k.OBCITcpCodeErrorDeviceNotFound);
+      });
+      it('No open BLE device', function () {
+        assert.equal(400, k.OBCITcpCodeErrorNoOpenBleDevice);
+      });
+      it('Unable to connect', function () {
+        assert.equal(402, k.OBCITcpCodeErrorUnableToConnect);
+      });
+      it('Unable to disconnect', function () {
+        assert.equal(401, k.OBCITcpCodeErrorUnableToDisconnect);
+      });
+      it('Already scanning', function () {
+        assert.equal(409, k.OBCITcpCodeErrorScanAlreadyScanning);
+      });
+      it('None found', function () {
+        assert.equal(407, k.OBCITcpCodeErrorScanNoneFound);
+      });
+    });
+    describe('others', function () {
+      it('None found', function () {
+        assert.equal(',;\n', k.OBCITcpStop);
+      });
+      it('Ganglion prefix', function () {
+        assert.equal('Ganglion', k.OBCIGanglionPrefix);
+      });
+      it('Ganglion ble search time', function () {
+        assert.equal(5000, k.OBCIGanglionBleSearchTime);
+      });
+      it('TCP Host', function () {
+        assert.equal('127.0.0.1', k.OBCITcpHost);
+      });
+      it('TCP Port', function () {
+        assert.equal(10996, k.OBCITcpPort);
+      });
+      it('packet size', function () {
+        assert.equal(20, k.OBCIGanglionPacketSize);
+      });
+      it('samples per packet', function () {
+        assert.equal(2, k.OBCIGanglionSamplesPerPacket);
+      });
+      it('packet positions', function () {
+        assert.equal(0, k.OBCIGanglionPacket.byteId);
+        assert.equal(1, k.OBCIGanglionPacket.dataStart);
+        assert.equal(20, k.OBCIGanglionPacket.dataStop);
+      });
+    });
+    describe('Commands', function () {
+      it('Synthetic data mode enable', function () {
+        assert.equal('t', k.OBCIGanglionSyntheticDataEnable);
+      });
+      it('Synthetic data mode disable', function () {
+        assert.equal('T', k.OBCIGanglionSyntheticDataDisable);
+      });
+    });
+    describe('Byte Id', function () {
+      it('Raw data', function () {
+        assert.equal(0, k.OBCIGanglionByteIdRawData);
+      });
+      it('Sample maximum', function () {
+        assert.equal(127, k.OBCIGanglionByteIdSampleMax);
+      });
+      it('Sample minimum', function () {
+        assert.equal(1, k.OBCIGanglionByteIdSampleMin);
+      });
+      it('Accel', function () {
+        assert.equal(128, k.OBCIGanglionByteIdAccel);
+      });
+      it('Impedance channel 1', function () {
+        assert.equal(129, k.OBCIGanglionByteIdImpedanceChannel1);
+      });
+      it('Impedance channel 2', function () {
+        assert.equal(130, k.OBCIGanglionByteIdImpedanceChannel2);
+      });
+      it('Impedance channel 3', function () {
+        assert.equal(131, k.OBCIGanglionByteIdImpedanceChannel3);
+      });
+      it('Impedance channel 4', function () {
+        assert.equal(132, k.OBCIGanglionByteIdImpedanceChannel4);
+      });
+      it('Impedance channel reference', function () {
+        assert.equal(133, k.OBCIGanglionByteIdImpedanceChannelReference);
+      });
+      it('Multi packet', function () {
+        assert.equal(134, k.OBCIGanglionByteIdMultiPacket);
+      });
+      it('Multi packet stop', function () {
+        assert.equal(135, k.OBCIGanglionByteIdMultiPacketStop);
+      });
+    });
+  });
+  describe('simblee', function () {
+    it('Service', function () {
+      assert.equal('fe84', k.SimbleeUuidService);
+    });
+    it('Receive', function () {
+      assert.equal('2d30c082f39f4ce6923f3484ea480596', k.SimbleeUuidReceive);
+    });
+    it('Service', function () {
+      assert.equal('2d30c083f39f4ce6923f3484ea480596', k.SimbleeUuidSend);
+    });
+    it('Service', function () {
+      assert.equal('2d30c084f39f4ce6923f3484ea480596', k.SimbleeUuidDisconnect);
+    });
+  });
+  describe('noble', function () {
+    it('Peripheral Connect', function () {
+      assert.equal('connect', k.OBCINobleEmitterPeripheralConnect);
+    });
+    it('Peripheral Disconnect', function () {
+      assert.equal('disconnect', k.OBCINobleEmitterPeripheralDisconnect);
+    });
+    it('Peripheral Discover', function () {
+      assert.equal('discover', k.OBCINobleEmitterPeripheralDiscover);
+    });
+    it('Peripheral Services Discover', function () {
+      assert.equal('servicesDiscover', k.OBCINobleEmitterPeripheralServicesDiscover);
+    });
+    it('Service Characteristics Discover', function () {
+      assert.equal('characteristicsDiscover', k.OBCINobleEmitterServiceCharacteristicsDiscover);
+    });
+    it('Service Read', function () {
+      assert.equal('read', k.OBCINobleEmitterServiceRead);
+    });
+    it('Discover', function () {
+      assert.equal('discover', k.OBCINobleEmitterDiscover);
+    });
+    it('Scan Start', function () {
+      assert.equal('scanStart', k.OBCINobleEmitterScanStart);
+    });
+    it('Scan Stop', function () {
+      assert.equal('scanStop', k.OBCINobleEmitterScanStop);
+    });
+    it('State Change', function () {
+      assert.equal('stateChange', k.OBCINobleEmitterStateChange);
+    });
+    it('State Powered On', function () {
+      assert.equal('poweredOn', k.OBCINobleStatePoweredOn);
+    });
   });
 });

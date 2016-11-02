@@ -664,7 +664,7 @@ describe('openbci-sdk', function () {
           ourBoard.write(k.OBCISDLogStop).should.have.been.rejected,
           ourBoard.write(k.OBCISDLogStop).should.have.been.rejected,
           ourBoard.disconnect()
-        ]).then(() => {+
+        ]).then(() => {
           writeSpy.should.have.not.been.called;
           writeSpy.restore();
         });

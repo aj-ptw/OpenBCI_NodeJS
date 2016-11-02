@@ -1,15 +1,15 @@
 'use strict';
-var EventEmitter = require('events').EventEmitter;
-var util = require('util');
-var stream = require('stream');
-var SerialPort = require('serialport');
-var openBCISample = require('./openBCISample');
-var k = openBCISample.k;
-var openBCISimulator = require('./openBCISimulator');
-var Sntp = require('sntp');
-var bufferEqual = require('buffer-equal');
-var math = require('mathjs');
-
+const bufferEqual = require('buffer-equal');
+const EventEmitter = require('events').EventEmitter;
+const math = require('mathjs');
+const util = require('util');
+const stream = require('stream');
+const SerialPort = require('serialport');
+const openBCISample = require('./openBCISample');
+const k = openBCISample.k;
+const openBCISimulator = require('./openBCISimulator');
+const Sntp = require('sntp');
+const openBCIUtils = require('./openBCIUtils');
 /**
 * @description SDK for OpenBCI Board {@link www.openbci.com}
 * @module 'openbci-sdk'
@@ -526,7 +526,7 @@ function OpenBCIFactory () {
   * @author AJ Keller (@pushtheworldllc)
   */
   OpenBCIBoard.prototype._writeAndDrain = function (data) {
-    this._debugBytes('>>>', data);
+    if (this.options.debug) openBCIUtils.debugBytes('>>>', data);
 
     return new Promise((resolve, reject) => {
       if (!this.isConnected()) return reject('Serial port not open');
@@ -1636,40 +1636,6 @@ function OpenBCIFactory () {
   };
 
   /**
-  * @description Output passed bytes on the console as a hexdump, if enabled
-  * @param prefix - label to show to the left of bytes
-  * @param data - bytes to output, a buffer or string
-  * @private
-  */
-  OpenBCIBoard.prototype._debugBytes = function (prefix, data) {
-    if (!this.options.debug) return;
-
-    if (typeof data === 'string') data = new Buffer(data);
-
-    console.log('Debug bytes:');
-
-    for (var j = 0; j < data.length;) {
-      var hexPart = '';
-      var ascPart = '';
-      for (var end = Math.min(data.length, j + 16); j < end; ++j) {
-        var byt = data[j];
-
-        var hex = ('0' + byt.toString(16)).slice(-2);
-        hexPart += (((j & 0xf) === 0x8) ? '  ' : ' '); // puts an extra space 8 bytes in
-        hexPart += hex;
-
-        var asc = (byt >= 0x20 && byt < 0x7f) ? String.fromCharCode(byt) : '.';
-        ascPart += asc;
-      }
-
-      // pad to fixed width for alignment
-      hexPart = (hexPart + '                                                   ').substring(0, 3 * 17);
-
-      console.log(prefix + ' ' + hexPart + '|' + ascPart + '|');
-    }
-  };
-
-  /**
   * @description Consider the '_processBytes' method to be the work horse of this
   *              entire framework. This method gets called any time there is new
   *              data coming in on the serial port. If you are familiar with the
@@ -1682,7 +1648,7 @@ function OpenBCIFactory () {
   * @author AJ Keller (@pushtheworldllc)
   */
   OpenBCIBoard.prototype._processBytes = function (data) {
-    this._debugBytes(this.curParsingMode + '<<', data);
+    if (this.options.debug) openBCIUtils.debugBytes(this.curParsingMode + '<<', data);
 
     // Concat old buffer
     var oldDataBuffer = null;
