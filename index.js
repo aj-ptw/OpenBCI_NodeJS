@@ -1,3 +1,3 @@
-module.exports.Board = require('./openBCIBoard');
+module.exports.Cyton = require('./openBCICyton');
 module.exports.Ganglion = require('./openBCIGanglion');
-module.exports.k = require('./openBCIConstants');
+module.exports.Constants = require('./openBCIConstants');

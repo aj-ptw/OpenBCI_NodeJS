@@ -88,15 +88,15 @@ module.exports = {
   },
   sampleMultiBytePacket: (data) => {
     const bufPre = new Buffer([k.OBCIGanglionByteIdMultiPacket]);
-    return new Buffer.concat([bufPre, data]);
+    return Buffer.concat([bufPre, data]);
   },
   sampleMultiBytePacketStop: (data) => {
     const bufPre = new Buffer([k.OBCIGanglionByteIdMultiPacketStop]);
-    return new Buffer.concat([bufPre, data]);
+    return Buffer.concat([bufPre, data]);
   },
   sampleOtherData: (data) => {
     const bufPre = new Buffer([255]);
-    return new Buffer.concat([bufPre, data]);
+    return Buffer.concat([bufPre, data]);
   },
   sampleUncompressedData: () => {
     return new Buffer(

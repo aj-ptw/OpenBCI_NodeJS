@@ -10,6 +10,7 @@ const chaiAsPromised = require('chai-as-promised');
 const sinonChai = require('sinon-chai');
 const bufferEqual = require('buffer-equal');
 const utils = require('../openBCIGanglionUtils');
+const clone = require('clone');
 
 chai.use(chaiAsPromised);
 chai.use(sinonChai);
@@ -23,21 +24,16 @@ describe('#ganglion', function () {
     simulatorHasAccelerometer: true,
     simulatorInternalClockDrift: 0,
     simulatorInjectAlpha: true,
-    simulatorInjectLineNoise: [k.OBCISimulatorLineNoiseHz60, k.OBCISimulatorLineNoiseHz50, k.OBCISimulatorLineNoiseNone],
+    simulatorInjectLineNoise: k.OBCISimulatorLineNoiseHz60,
     simulatorSampleRate: 200,
     verbose: false,
-    debug: false
+    debug: false,
+    sendCounts: false
   };
+  const expectedProperties = clone(mockProperties);
   const ganglion = new Ganglion(mockProperties);
-
   it('should have properties', function () {
-    ganglion.options.should.equal(mockProperties);
-  });
-});
-
-describe('#generalGanglion', function () {
-  const ganglion = new Ganglion({
-    nobleAutoStart: false
+    expect(ganglion.options).to.deep.equal(expectedProperties);
   });
   it('should return 4 channels', function () {
     expect(ganglion.numberOfChannels()).to.equal(4);

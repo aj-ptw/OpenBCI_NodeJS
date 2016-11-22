@@ -1438,7 +1438,7 @@ describe('OpenBCIConstants', function () {
   });
   describe('Emitters', function () {
     it('Event Emitter BLE Powered On', function () {
-      assert.equal('blePoweredOn', k.OBCIEmitterBlePoweredOn);
+      assert.equal('blePoweredOn', k.OBCIEmitterBlePoweredUp);
     });
     it('Event Emitter Close', function () {
       assert.equal('close', k.OBCIEmitterClose);
@@ -1472,82 +1472,12 @@ describe('OpenBCIConstants', function () {
     });
   });
   describe('Ganglion', function () {
-    describe('Commands', function () {
-      it('Connect', function () {
-        assert.equal('c', k.OBCITcpCmdConnect);
-      });
-      it('Command', function () {
-        assert.equal('k', k.OBCITcpCmdCommand);
-      });
-      it('Data', function () {
-        assert.equal('t', k.OBCITcpCmdData);
-      });
-      it('Disconnect', function () {
-        assert.equal('d', k.OBCITcpCmdDisconnect);
-      });
-      it('Error', function () {
-        assert.equal('e', k.OBCITcpCmdError);
-      });
-      it('Impedance', function () {
-        assert.equal('z', k.OBCITcpCmdImpedance);
-      });
-      it('Log', function () {
-        assert.equal('l', k.OBCITcpCmdLog);
-      });
-      it('Scan', function () {
-        assert.equal('s', k.OBCITcpCmdScan);
-      });
-      it('Status', function () {
-        assert.equal('q', k.OBCITcpCmdStatus);
-      });
-    });
-    describe('Codes', function () {
-      it('Bad packet data', function () {
-        assert.equal(500, k.OBCITcpCodeBadPacketData);
-      });
-      it('Good', function () {
-        assert.equal(200, k.OBCITcpCodeSuccess);
-      });
-      it('Already connected', function () {
-        assert.equal(408, k.OBCITcpCodeErrorAlreadyConnected);
-      });
-      it('Command not recognized', function () {
-        assert.equal(406, k.OBCITcpCodeErrorCommandNotRecognized);
-      });
-      it('Device not found', function () {
-        assert.equal(405, k.OBCITcpCodeErrorDeviceNotFound);
-      });
-      it('No open BLE device', function () {
-        assert.equal(400, k.OBCITcpCodeErrorNoOpenBleDevice);
-      });
-      it('Unable to connect', function () {
-        assert.equal(402, k.OBCITcpCodeErrorUnableToConnect);
-      });
-      it('Unable to disconnect', function () {
-        assert.equal(401, k.OBCITcpCodeErrorUnableToDisconnect);
-      });
-      it('Already scanning', function () {
-        assert.equal(409, k.OBCITcpCodeErrorScanAlreadyScanning);
-      });
-      it('None found', function () {
-        assert.equal(407, k.OBCITcpCodeErrorScanNoneFound);
-      });
-    });
     describe('others', function () {
-      it('None found', function () {
-        assert.equal(',;\n', k.OBCITcpStop);
-      });
       it('Ganglion prefix', function () {
         assert.equal('Ganglion', k.OBCIGanglionPrefix);
       });
       it('Ganglion ble search time', function () {
-        assert.equal(5000, k.OBCIGanglionBleSearchTime);
-      });
-      it('TCP Host', function () {
-        assert.equal('127.0.0.1', k.OBCITcpHost);
-      });
-      it('TCP Port', function () {
-        assert.equal(10996, k.OBCITcpPort);
+        assert.equal(20000, k.OBCIGanglionBleSearchTime);
       });
       it('packet size', function () {
         assert.equal(20, k.OBCIGanglionPacketSize);

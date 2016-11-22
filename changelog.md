@@ -1,3 +1,13 @@
+# 2.0.0
+
+### New Features
+* GANGLION! The only driver for the Ganglion out there! Woo!
+* `index.js` file allows for ES6 destructing
+
+### Breaking Changes
+* Change name of `OpenBCIBoard` to `Cyton` to follow new naming convention.
+* Major change to how board is initialized with removal of `factory` paradigm.
+
 # 1.4.1
 
 ### Bug Fixes
@@ -226,7 +236,7 @@ The second major release for the OpenBCI Node.js SDK brings major changes, impro
 ### Bug Fixes
 
 * updates to README.me and comments to change ntp to sntp, because the two are similar, but not the same and we do not want to be misleading
-* Extended [Stnp](https://www.npmjs.com/package/sntp) to main openBCIBoard.js
+* Extended [Stnp](https://www.npmjs.com/package/sntp) to main openBCICyton.js
 * Add `.sntpNow()` function to get ntp time.
 
 # 0.3.1

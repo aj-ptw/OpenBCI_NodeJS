@@ -35,7 +35,7 @@ ganglion.once(k.OBCIEmitterGanglionFound, (peripheral) => {
     console.log('ready');
   });
 
-  ganglion.connect('Ganglion-9e20').catch(errorFunc);
+  ganglion.connect(peripheral).catch(errorFunc);
 });
 
 ganglion.searchStart().catch(errorFunc);

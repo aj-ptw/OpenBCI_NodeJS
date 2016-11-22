@@ -2,28 +2,28 @@
 * Created by ajk on 12/15/15.
 */
 'use strict';
-var bluebirdChecks = require('./bluebirdChecks');
-var openBCISample = require('../openBCISample');
-var chai = require('chai');
-var expect = chai.expect;
-var assert = chai.assert;
-var should = chai.should(); // eslint-disable-line no-unused-vars
+const bluebirdChecks = require('./bluebirdChecks');
+const openBCISample = require('../openBCISample');
+const chai = require('chai');
+const expect = chai.expect;
+const assert = chai.assert;
+const should = chai.should(); // eslint-disable-line no-unused-vars
 
-var chaiAsPromised = require('chai-as-promised');
-var sinonChai = require('sinon-chai');
+const chaiAsPromised = require('chai-as-promised');
+const sinonChai = require('sinon-chai');
 chai.use(chaiAsPromised);
 chai.use(sinonChai);
-var bufferEqual = require('buffer-equal');
+const bufferEqual = require('buffer-equal');
 
-var k = openBCISample.k;
+const k = require('../openBCIConstants');
 
 const defaultChannelSettingsArray = k.channelSettingsArrayInit(k.OBCINumberOfChannelsDefault);
 
-var sampleBuf = openBCISample.samplePacket();
+const sampleBuf = openBCISample.samplePacket();
 
-var accelArray;
+let accelArray;
 
-var channelScaleFactor = 4.5 / 24 / (Math.pow(2, 23) - 1);
+const channelScaleFactor = 4.5 / 24 / (Math.pow(2, 23) - 1);
 
 describe('openBCISample', function () {
   beforeEach(function () {
