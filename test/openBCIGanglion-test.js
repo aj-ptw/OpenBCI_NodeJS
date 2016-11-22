@@ -219,6 +219,90 @@ describe('#ganglion', function () {
       funcSpyUncompressedData.should.have.been.calledOnce;
     });
   });
+  it('should emit impedance value', function() {
+    let expectedImpedanceValue = 1099;
+    const payloadBuf = new Buffer(`${expectedImpedanceValue}${k.OBCIGanglionImpedanceStop}`);
+    let totalEvents = 0;
+    let runningEventCount = 0;
+
+    // Channel 1
+    totalEvents++;
+    let expectedChannelNumber = 1;
+    let impPre = new Buffer([k.OBCIGanglionByteIdImpedanceChannel1]);
+    let expectedReturnValue = {
+      channelNumber: expectedChannelNumber,
+      impedanceValue: expectedImpedanceValue
+    };
+    let dataBuf = Buffer.concat([impPre, payloadBuf]);
+    ganglion.once('impedance', (actualImpedanceValue) => {
+      expect(actualImpedanceValue).to.deep.equal(expectedReturnValue);
+      runningEventCount++;
+    });
+    ganglion._processImpedanceData(dataBuf);
+
+    // Channel 2
+    totalEvents++;
+    expectedChannelNumber = 2;
+    impPre[0] = k.OBCIGanglionByteIdImpedanceChannel2;
+    expectedReturnValue = {
+      channelNumber: expectedChannelNumber,
+      impedanceValue: expectedImpedanceValue
+    };
+    dataBuf = Buffer.concat([impPre, payloadBuf]);
+    ganglion.once('impedance', (actualImpedanceValue) => {
+      expect(actualImpedanceValue).to.deep.equal(expectedReturnValue);
+      runningEventCount++;
+    });
+    ganglion._processImpedanceData(dataBuf);
+
+    // Channel 3
+    totalEvents++;
+    expectedChannelNumber = 3;
+    impPre[0] = k.OBCIGanglionByteIdImpedanceChannel3;
+    expectedReturnValue = {
+      channelNumber: expectedChannelNumber,
+      impedanceValue: expectedImpedanceValue
+    };
+    dataBuf = Buffer.concat([impPre, payloadBuf]);
+    ganglion.once('impedance', (actualImpedanceValue) => {
+      expect(actualImpedanceValue).to.deep.equal(expectedReturnValue);
+      runningEventCount++;
+    });
+    ganglion._processImpedanceData(dataBuf);
+
+    // Channel 4
+    totalEvents++;
+    expectedChannelNumber = 4;
+    impPre[0] = k.OBCIGanglionByteIdImpedanceChannel4;
+    expectedReturnValue = {
+      channelNumber: expectedChannelNumber,
+      impedanceValue: expectedImpedanceValue
+    };
+    dataBuf = Buffer.concat([impPre, payloadBuf]);
+    ganglion.once('impedance', (actualImpedanceValue) => {
+      expect(actualImpedanceValue).to.deep.equal(expectedReturnValue);
+      runningEventCount++;
+    });
+    ganglion._processImpedanceData(dataBuf);
+
+    // Channel Reference
+    totalEvents++;
+    expectedChannelNumber = 'reference';
+    impPre[0] = k.OBCIGanglionByteIdImpedanceChannelReference;
+    expectedReturnValue = {
+      channelNumber: expectedChannelNumber,
+      impedanceValue: expectedImpedanceValue
+    };
+    dataBuf = Buffer.concat([impPre, payloadBuf]);
+    ganglion.once('impedance', (actualImpedanceValue) => {
+      expect(actualImpedanceValue).to.deep.equal(expectedReturnValue);
+      runningEventCount++;
+    });
+    ganglion._processImpedanceData(dataBuf);
+
+    // Makes sure the correct amount of events were called.
+    expect(runningEventCount).to.equal(totalEvents)
+  });
 });
 
 xdescribe('#noble', function () {

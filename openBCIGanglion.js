@@ -721,8 +721,49 @@ Ganglion.prototype._processCompressedData = function (data) {
   }
 };
 
+/**
+ * Process and emit an impedance value
+ * @param data {Buffer}
+ * @private
+ */
 Ganglion.prototype._processImpedanceData = function (data) {
-  openBCIUtils.debugBytes('Impedance <<< ', data);
+  if (this.options.verbose) openBCIUtils.debugBytes('Impedance <<< ', data);
+  const byteId = parseInt(data[0]);
+  let channelNumber;
+  switch (byteId) {
+    case k.OBCIGanglionByteIdImpedanceChannel1:
+      channelNumber = 1;
+      break;
+    case k.OBCIGanglionByteIdImpedanceChannel2:
+      channelNumber = 2;
+      break;
+    case k.OBCIGanglionByteIdImpedanceChannel3:
+      channelNumber = 3;
+      break;
+    case k.OBCIGanglionByteIdImpedanceChannel4:
+      channelNumber = 4;
+      break;
+    case k.OBCIGanglionByteIdImpedanceChannelReference:
+      channelNumber = 'reference';
+      break;
+  }
+
+  let output = {
+    channelNumber: channelNumber,
+    impedanceValue: 0
+  };
+
+  let end = data.length;
+
+  while (_.isNaN(Number(data.slice(1, end))) && end !== 0) {
+    end--;
+  }
+
+  if (end !== 0) {
+    output.impedanceValue = Number(data.slice(1, end));
+  }
+
+  this.emit('impedance', output);
 };
 
 /**

@@ -343,6 +343,7 @@ const obciEmitterClose = 'close';
 const obciEmitterDroppedPacket = 'droppedPacket';
 const obciEmitterError = 'error';
 const obciEmitterGanglionFound = 'ganglionFound';
+const obciEmitterImpedance = 'impedance';
 const obciEmitterImpedanceArray = 'impedanceArray';
 const obciEmitterMessage = 'message';
 const obciEmitterQuery = 'query';
@@ -376,6 +377,8 @@ const obciGanglionMCP3912Vref = 1.2;  // reference voltage for ADC in MCP3912 se
 const obciGanglionPrefix = 'Ganglion';
 const obciGanglionSyntheticDataEnable = 't';
 const obciGanglionSyntheticDataDisable = 'T';
+const obciGanglionImpedanceStart = 'z';
+const obciGanglionImpedanceStop = 'Z';
 const obciGanglionScaleFactorPerCountVolts = obciGanglionMCP3912Vref / (8388607.0 * obciGanglionMCP3912Gain * 1.5 * 51.0);
 
 /** Simblee */
@@ -956,6 +959,7 @@ module.exports = {
   OBCIEmitterDroppedPacket: obciEmitterDroppedPacket,
   OBCIEmitterError: obciEmitterError,
   OBCIEmitterGanglionFound: obciEmitterGanglionFound,
+  OBCIEmitterImpedance: obciEmitterImpedance,
   OBCIEmitterImpedanceArray: obciEmitterImpedanceArray,
   OBCIEmitterMessage: obciEmitterMessage,
   OBCIEmitterQuery: obciEmitterQuery,
@@ -984,6 +988,8 @@ module.exports = {
   OBCIGanglionSamplesPerPacket: obciGanglionSamplesPerPacket,
   OBCIGanglionSyntheticDataEnable: obciGanglionSyntheticDataEnable,
   OBCIGanglionSyntheticDataDisable: obciGanglionSyntheticDataDisable,
+  OBCIGanglionImpedanceStart: obciGanglionImpedanceStart,
+  OBCIGanglionImpedanceStop: obciGanglionImpedanceStop,
   OBCIGanglionScaleFactorPerCountVolts: obciGanglionScaleFactorPerCountVolts,
   /** Simblee */
   SimbleeUuidService: simbleeUuidService,

@@ -1452,6 +1452,9 @@ describe('OpenBCIConstants', function () {
     it('Event Emitter Ganglion Found', function () {
       assert.equal('ganglionFound', k.OBCIEmitterGanglionFound);
     });
+    it('Event Emitter Impedance', function () {
+      assert.equal('impedance', k.OBCIEmitterImpedance);
+    });
     it('Event Emitter Impedance Array', function () {
       assert.equal('impedanceArray', k.OBCIEmitterImpedanceArray);
     });
@@ -1497,6 +1500,12 @@ describe('OpenBCIConstants', function () {
       });
       it('Synthetic data mode disable', function () {
         assert.equal('T', k.OBCIGanglionSyntheticDataDisable);
+      });
+      it('Impedance start', function () {
+        assert.equal('z', k.OBCIGanglionImpedanceStart);
+      });
+      it('Impedance stop', function () {
+        assert.equal('Z', k.OBCIGanglionImpedanceStop);
       });
     });
     describe('Byte Id', function () {
