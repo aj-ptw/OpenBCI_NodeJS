@@ -23,7 +23,7 @@ before_install:
 - sudo apt-get update -qq
 - sudo apt-get install -qq libbluetooth-dev
 install:
-  - npm install bluetooth-hci-socket
+  - npm install node-pre-gyp bluetooth-hci-socket
   - npm install --all
 script:
   - npm run test-cov
