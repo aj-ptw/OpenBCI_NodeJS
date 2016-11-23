@@ -10,7 +10,7 @@
 
 A Node.js module for OpenBCI ~ written with love by [Push The World!](http://www.pushtheworldllc.com)
 
-We are proud to support all functionality of the Cyton (8 and 16 Channel boards) along with the Ganglion (4 channel). Push The World is actively developing and maintaining this module.
+We are proud to support all functionality of the Cyton (8 and 16 Channel boards). For the Ganglion (4 channel) please visit [OpenBCI_NodeJS_Ganglion](https://github.com/OpenBCI/OpenBCI_NodeJS_Ganglion). Push The World is actively developing and maintaining this module.
 
 The purpose of this module is to **get connected** and **start streaming** as fast as possible.
 
@@ -18,16 +18,15 @@ The purpose of this module is to **get connected** and **start streaming** as fa
 ---
 
 1. [TL;DR](#tldr)
-2. [Prerequisites](#prerequisites)
 2. [Installation](#install)
 3. [Cyton (32bit Board)](#cyton)
-  1. [About](#cyton-about)
-  2. [General Overview](#cyton-general-overview)
-  3. [SDK Reference Guide](#cyton-sdk-reference-guide)
-    * [Constructor](#cyton-constructor)
-    * [Methods](#cyton-method)
-    * [Events](#cyton-event)
-    * [Constants](#cyton-constants)
+  1. [About](#about)
+  2. [General Overview](#general-overview)
+  3. [SDK Reference Guide](#sdk-reference-guide)
+    * [Constructor](#constructor)
+    * [Methods](#method)
+    * [Events](#event)
+    * [Constants](#constants)
 6. [Interfacing With Other Tools](#interfacing-with-other-tools)
 7. [Developing](#developing)
 8. [Testing](#developing-testing)
@@ -60,54 +59,6 @@ ourBoard.connect(portName) // Port name is a serial port name, see `.listPorts()
     });
 });
 ```
-
-#### Ganglion (4 channel)
-```ecmascript 6
-const Ganglion = require('openbci').Ganglion;
-const ganglion = new Ganglion();
-ganglion.once('ganglionFound', (peripheral) => {
-  // Stop searching for BLE devices once a ganglion is found.
-  ganglion.searchStop();
-  ganglion.on('sample', (sample) => {
-    /** Work with sample */
-    console.log(sample.sampleNumber);
-    for (let i = 0; i < ganglion.numberOfChannels(); i++) {
-      console.log("Channel " + (i + 1) + ": " + sample.channelData[i].toFixed(8) + " Volts.");
-    }
-  });
-  ganglion.once('ready', () => {
-    ganglion.streamStart();
-  });
-  ganglion.connect(peripheral);
-});
-// Start scanning for BLE devices
-ganglion.searchStart();
-```
-
-### <a name="prerequisites"></a> Prerequisites:
-
-Please ensure [Python 2.7 is installed](https://www.python.org/downloads/) for all OS.
-
-### macOS
-
- * install [Xcode](https://itunes.apple.com/ca/app/xcode/id497799835?mt=12)
- 
-### Linux
-
- * Kernel version 3.6 or above
- * ```libbluetooth-dev```
- 
-### Windows 8+
-
- * [node-gyp requirements for Windows](https://github.com/TooTallNate/node-gyp#installation)
-   * Python 2.7
-   * Visual Studio ([Express](https://www.visualstudio.com/en-us/products/visual-studio-express-vs.aspx))
- * [node-bluetooth-hci-socket prerequisites](https://github.com/sandeepmistry/node-bluetooth-hci-socket#windows)
-   * Compatible Bluetooth 4.0 USB adapter
-   * [WinUSB](https://msdn.microsoft.com/en-ca/library/windows/hardware/ff540196(v=vs.85).aspx) driver setup for Bluetooth 4.0 USB adapter, using [Zadig tool](http://zadig.akeo.ie/)
-
-See [@don](https://github.com/don)'s set up guide on [Bluetooth LE with Node.js and Noble on Windows](https://www.youtube.com/watch?v=mL9B8wuEdms).
-
  
 ### <a name="install"></a> Installation:
 
@@ -118,7 +69,7 @@ npm install openbci
 
 # <a name="cyton"></a> Cyton
 
-## <a name="cyton-about"></a> About:
+## <a name="about"></a> About:
 Want to know if the module really works? Check out some projects and organizations using it:
 
 * [_OpenEXP_](https://github.com/openexp/OpenEXP): an open-source desktop app for running experiments and collecting behavioral and physiological data.
@@ -129,7 +80,7 @@ Still not satisfied it works?? Check out this [detailed report](http://s13234284
 
 How are you still doubting and not using this already? Fine, go look at some of the [800 **_automatic_** tests](https://codecov.io/gh/OpenBCI/OpenBCI_NodeJS) written for it!
 
-## <a name="cyton-general-overview"></a> General Overview:
+## <a name="general-overview"></a> General Overview:
 
 Initialization
 --------------
@@ -427,11 +378,11 @@ ourBoard.connect(portName).then(function(boardSerial) {
 
 See Reference Guide for a complete list of impedance tests.
 
-## <a name="cyton-sdk-reference-guide"></a> SDK Reference Guide:
+## <a name="sdk-reference-guide"></a> SDK Reference Guide:
 ---------------
-### <a name="cyton-constructor"></a> Constructor:
+### <a name="constructor"></a> Constructor:
 
-#### <a name="cyton-init"></a> Cyton (options)
+#### <a name="init"></a> Cyton (options)
 
 Create new instance of an Cyton board.
 
@@ -472,9 +423,9 @@ Board optional configurations.
 
 **Note, we have added support for either all lowercase OR camel case for the options, use whichever style you prefer.**
 
-### <a name="cyton-methods"></a> Methods:
+### <a name="methods"></a> Methods:
 
-#### <a name="cyton-method-auto-find-open-bci-board"></a> .autoFindOpenBCIBoard()
+#### <a name="method-auto-find-open-bci-board"></a> .autoFindOpenBCIBoard()
 
 Automatically find an OpenBCI board.
 
@@ -482,7 +433,7 @@ Automatically find an OpenBCI board.
 
 **_Returns_** a promise, fulfilled with a `portName` such as `/dev/tty.*` on Mac/Linux or `OpenBCISimulator` if `this.options.simulate === true`.
 
-#### <a name="cyton-method-channel-off"></a> .channelOff(channelNumber)
+#### <a name="method-channel-off"></a> .channelOff(channelNumber)
 
 Turn off a specified channel
 
@@ -492,7 +443,7 @@ A number (1-16) specifying which channel you want to turn off.
 
 **_Returns_** a promise, fulfilled if the command was sent to the write queue.
 
-#### <a name="cyton-method-channel-on"></a> .channelOn(channelNumber)
+#### <a name="method-channel-on"></a> .channelOn(channelNumber)
 
 Turn on a specified channel
 
@@ -502,7 +453,7 @@ A number (1-16) specifying which channel you want to turn on.
 
 **_Returns_** a promise, fulfilled if the command was sent to the write queue.
 
-#### <a name="cyton-method-"></a> .channelSet(channelNumber,powerDown,gain,inputType,bias,srb2,srb1)
+#### <a name="method-"></a> .channelSet(channelNumber,powerDown,gain,inputType,bias,srb2,srb1)
 
 Send a channel setting command to the board.
 
@@ -542,7 +493,7 @@ ourBoard.channelSet(2,false,24,'normal',true,true,false);
 // sends ['x','2','0','6','0','1','1','0','X'] to the command queue
 ```
 
-#### <a name="cyton-method-connect"></a> .connect(portName)
+#### <a name="method-connect"></a> .connect(portName)
 
 The essential precursor method to be called initially to establish a serial connection to the OpenBCI board.
 
@@ -552,17 +503,17 @@ The system path of the OpenBCI board serial port to open. For example, `/dev/tty
 
 **_Returns_** a promise, fulfilled by a successful serial connection to the board.
 
-#### <a name="cyton-method-debug-session"></a> .debugSession()
+#### <a name="method-debug-session"></a> .debugSession()
 
 Calls all [`.printPacketsBad()`](#method-print-packets-bad), [`.printPacketsRead()`](#method-print-packets-read), [`.printBytesIn()`](#method-print-bytes-in)
 
-#### <a name="cyton-method-disconnect"></a> .disconnect()
+#### <a name="method-disconnect"></a> .disconnect()
 
 Closes the serial port opened by [`.connect()`](#method-connect).  Waits for stop streaming command to be sent if currently streaming.
 
 **_Returns_** a promise, fulfilled by a successful close of the serial port object, rejected otherwise.
 
-#### <a name="cyton-method-get-settings-for-channel"></a> .getSettingsForChannel(channelNumber)
+#### <a name="method-get-settings-for-channel"></a> .getSettingsForChannel(channelNumber)
 
 Gets the specified channelSettings register data from printRegisterSettings call.
 
@@ -574,7 +525,7 @@ A number specifying which channel you want to get data on. Only 1-8 at this time
 
 **_Returns_** a promise, fulfilled if the command was sent to the board and the `.processBytes()` function is ready to reach for the specified channel.
 
-#### <a name="cyton-method-impedance-test-all-channels"></a> .impedanceTestAllChannels()
+#### <a name="method-impedance-test-all-channels"></a> .impedanceTestAllChannels()
 
 To apply test signals to the channels on the OpenBCI board used to test for impedance. This can take a little while to actually run (<8 seconds)!
 
@@ -584,7 +535,7 @@ Don't forget to install the ['impedanceArray'](#event-impedance-array) emitter t
 
 **_Returns_** a promise upon completion of test.  
 
-#### <a name="cyton-method-impedance-test-channels"></a> .impedanceTestChannels(arrayOfCommands)
+#### <a name="method-impedance-test-channels"></a> .impedanceTestChannels(arrayOfCommands)
 
 **_arrayOfCommands_**
 
@@ -601,7 +552,7 @@ Don't forget to install the `impedanceArray` emitter to receive the impendances!
 
 **_Returns_** a promise upon completion of test.  
 
-#### <a name="cyton-method-impedance-test-channel"></a> .impedanceTestChannel(channelNumber)
+#### <a name="method-impedance-test-channel"></a> .impedanceTestChannel(channelNumber)
 
 Run a complete impedance test on a single channel, applying the test signal individually to P & N inputs.
 
@@ -643,7 +594,7 @@ Where an impedance for this method call would look like:
 }
 ```
 
-#### <a name="cyton-method-impedance-test-channel-input-p"></a> .impedanceTestChannelInputP(channelNumber)
+#### <a name="method-impedance-test-channel-input-p"></a> .impedanceTestChannelInputP(channelNumber)
 
 Run impedance test on a single channel, applying the test signal only to P input.
 
@@ -685,7 +636,7 @@ Where an impedance for this method call would look like:
 }
 ```
 
-#### <a name="cyton-method-impedance-test-channel-input-n"></a> .impedanceTestChannelInputN(channelNumber)
+#### <a name="method-impedance-test-channel-input-n"></a> .impedanceTestChannelInputN(channelNumber)
 
 Run impedance test on a single channel, applying the test signal only to N input.
 
@@ -726,35 +677,35 @@ Where an impedance for this method call would look like:
 }
 ```
 
-#### <a name="cyton-method-impedance-test-continuous-start"></a> .impedanceTestContinuousStart()
+#### <a name="method-impedance-test-continuous-start"></a> .impedanceTestContinuousStart()
 
 Sends command to turn on impedances for all channels and continuously calculate their impedances.
 
 **_Returns_** a promise, that fulfills when all the commands are sent to the internal write buffer
 
-#### <a name="cyton-method-impedance-test-continuous-stop"></a> .impedanceTestContinuousStop()
+#### <a name="method-impedance-test-continuous-stop"></a> .impedanceTestContinuousStop()
 
 Sends command to turn off impedances for all channels and stop continuously calculate their impedances.
 
 **_Returns_** a promise, that fulfills when all the commands are sent to the internal write buffer
 
-#### <a name="cyton-method-is-connected"></a> .isConnected()
+#### <a name="method-is-connected"></a> .isConnected()
 
 Checks if the driver is connected to a board.
 **_Returns_** a boolean, true if connected
 
-#### <a name="cyton-method-is-streaming"></a> .isStreaming()
+#### <a name="method-is-streaming"></a> .isStreaming()
 
 Checks if the board is currently sending samples.
 **_Returns_** a boolean, true if streaming
 
-#### <a name="cyton-method-list-ports"></a> .listPorts()
+#### <a name="method-list-ports"></a> .listPorts()
 
 List available ports so the user can choose a device when not automatically found.
 
 **_Returns_** a promise, fulfilled with a list of available serial ports.
 
-#### <a name="cyton-method-number-of-channels"></a> .numberOfChannels()
+#### <a name="method-number-of-channels"></a> .numberOfChannels()
 
 Get the current number of channels available to use. (i.e. 8 or 16).
 
@@ -762,25 +713,25 @@ Get the current number of channels available to use. (i.e. 8 or 16).
 
 **_Returns_** a number, the total number of available channels.
 
-#### <a name="cyton-method-print-bytes-in"></a> .printBytesIn()
+#### <a name="method-print-bytes-in"></a> .printBytesIn()
 
 Prints the total number of bytes that were read in this session to the console.
 
-#### <a name="cyton-method-print-packets-bad"></a> .printPacketsBad()
+#### <a name="method-print-packets-bad"></a> .printPacketsBad()
 
 Prints the total number of packets that were not able to be read in this session to the console.
 
-#### <a name="cyton-method-print-packets-read"></a> .printPacketsRead()
+#### <a name="method-print-packets-read"></a> .printPacketsRead()
 
 Prints the total number of packets that were read in this session to the console.
 
-#### <a name="cyton-method-print-register-settings"></a> .printRegisterSettings()
+#### <a name="method-print-register-settings"></a> .printRegisterSettings()
 
 Prints all register settings for the ADS1299 and the LIS3DH on the OpenBCI board.
 
 **_Returns_** a promise, fulfilled if the command was sent to the write queue.
 
-#### <a name="cyton-method-radio-baud-rate-set"></a> .radioBaudRateSet(speed)
+#### <a name="method-radio-baud-rate-set"></a> .radioBaudRateSet(speed)
 
 Used to set the OpenBCI Host (Dongle) baud rate. With the RFduino configuration, the Dongle is the Host and the Board is the Device. Only the Device can initiate a communication between the two entities. There exists a detrimental error where if the Host is interrupted by the radio during a Serial write, then all hell breaks loose. So this is an effort to eliminate that problem by increasing the rate at which serial data is sent from the Host to the Serial driver. The rate can either be set to default or fast. Further the function should reject if currently streaming. Lastly and more important, if the board is not running the new firmware then this functionality does not exist and thus this method will reject. If the board is using firmware 2+ then this function should resolve the new baud rate after closing the current serial port and reopening one.
 
@@ -792,7 +743,7 @@ Used to set the OpenBCI Host (Dongle) baud rate. With the RFduino configuration,
 
 **_Returns_** {Promise} - Resolves a {Number} that is the new baud rate, rejects on error.
 
-#### <a name="cyton-method-radio-channel-get"></a> .radioChannelGet()
+#### <a name="method-radio-channel-get"></a> .radioChannelGet()
 
 Used to query the OpenBCI system for it's radio channel number. The function will reject if not connected to the serial port of the dongle. Further the function should reject if currently streaming. Lastly and more important, if the board is not running the new firmware then this functionality does not exist and thus this method will reject. If the board is using firmware 2+ then this function should resolve an Object. See `returns` below.
 
@@ -800,7 +751,7 @@ Used to query the OpenBCI system for it's radio channel number. The function wil
 
 **_Returns_** {Promise} - Resolve an object with keys `channelNumber` which is a Number and `err` which contains an error in the condition that there system is experiencing board communications failure.
 
-#### <a name="cyton-method-radio-channel-set"></a> .radioChannelSet(channelNumber)
+#### <a name="method-radio-channel-set"></a> .radioChannelSet(channelNumber)
 
 Used to set the system radio channel number. The function will reject if not connected to the serial port of the dongle. Further the function should reject if currently streaming. Lastly and more important, if the board is not running the new firmware then this functionality does not exist and thus this method will reject. If the board is using firmware 2+ then this function should resolve.
 
@@ -812,7 +763,7 @@ Used to set the system radio channel number. The function will reject if not con
 
 **_Returns_** {Promise} - Resolves with the new channel number, rejects with err.
 
-#### <a name="cyton-method-radio-channel-set-host-override"></a> .radioChannelSetHostOverride(channelNumber)
+#### <a name="method-radio-channel-set-host-override"></a> .radioChannelSetHostOverride(channelNumber)
 
 Used to set the ONLY the radio dongle Host channel number. This will fix your radio system if your dongle and board are not on the right channel and bring down your radio system if you take your dongle and board are not on the same channel. Use with caution! The function will reject if not connected to the serial port of the dongle. Further the function should reject if currently streaming. Lastly and more important, if the board is not running the new firmware then this functionality does not exist and thus this method will reject. If the board is using firmware 2+ then this function should resolve.
 
@@ -824,7 +775,7 @@ Used to set the ONLY the radio dongle Host channel number. This will fix your ra
 
 **_Returns_** {Promise} - Resolves with the new channel number, rejects with err.
 
-#### <a name="cyton-method-radio-poll-time-get"></a> .radioPollTimeGet()
+#### <a name="method-radio-poll-time-get"></a> .radioPollTimeGet()
 
 Used to query the OpenBCI system for it's device's poll time. The function will reject if not connected to the serial port of the dongle. Further the function should reject if currently streaming. Lastly and more important, if the board is not running the new firmware then this functionality does not exist and thus this method will reject. If the board is using firmware 2+ then this function should resolve the poll time when fulfilled. It's important to note that if the board is not on, this function will always be rejected with a failure message.
 
@@ -832,7 +783,7 @@ Used to query the OpenBCI system for it's device's poll time. The function will 
 
 **_Returns_** {Promise} - Resolves with the new poll time, rejects with err.
 
-#### <a name="cyton-method-radio-poll-time-set"></a> .radioPollTimeSet(pollTime)
+#### <a name="method-radio-poll-time-set"></a> .radioPollTimeSet(pollTime)
 
 Used to set the OpenBCI poll time. With the RFduino configuration, the Dongle is the Host and the Board is the Device. Only the Device can initiate a communication between the two entities. Therefore this sets the interval at which the Device polls the Host for new information. Further the function should reject if currently streaming. Lastly and more important, if the board is not running the new firmware then this functionality does not exist and thus this method will reject. If the board is using firmware 2+ then this function should resolve.
 
@@ -844,7 +795,7 @@ Used to set the OpenBCI poll time. With the RFduino configuration, the Dongle is
 
 **_Returns_** {Promise} - Resolves with the new channel number, rejects with err.
 
-#### <a name="cyton-method-radio-system-status-get"></a> .radioSystemStatusGet()
+#### <a name="method-radio-system-status-get"></a> .radioSystemStatusGet()
 
 Used to ask the Host if it's radio system is up. This is useful to quickly determine if you are in fact ready to start trying to connect and such. The function will reject if not connected to the serial port of the dongle. Further the function should reject if currently streaming. Lastly and more important, if the board is not running the new firmware then this functionality does not exist and thus this method will reject. If the board is using firmware +v2.0.0 and the radios are both on the same channel and powered, then this will resolve true.
 
@@ -852,7 +803,7 @@ Used to ask the Host if it's radio system is up. This is useful to quickly deter
 
 **_Returns_** {Promise} - Resolves true if both radios are powered and on the same channel; false otherwise.
 
-#### <a name="cyton-method-sample-rate"></a> .sampleRate()
+#### <a name="method-sample-rate"></a> .sampleRate()
 
 Get the current sample rate.
 
@@ -860,7 +811,7 @@ Get the current sample rate.
 
 **_Returns_** a number, the current sample rate.
 
-#### <a name="cyton-method-sd-start"></a> .sdStart(recordingDuration)
+#### <a name="method-sd-start"></a> .sdStart(recordingDuration)
 
 Start logging to the SD card. If you are not streaming when you send this command, then you should expect to get a success or failure message followed by and end of transmission `$$$`.
 
@@ -882,13 +833,13 @@ The duration you want to log SD information for. Opens a new SD file to write in
 
 **_Returns_** resolves if the command was added to the write queue.
 
-#### <a name="cyton-method-sd-stop"></a> .sdStop()
+#### <a name="method-sd-stop"></a> .sdStop()
 
 Stop logging to the SD card and close any open file. If you are not streaming when you send this command, then you should expect to get a success or failure message followed by and end of transmission `$$$`. The success message contains a lot of useful information about what happened when writing to the SD card.
 
 **_Returns_** resolves if the command was added to the write queue.
 
-#### <a name="cyton-method-simulator-enable"></a> .simulatorEnable()
+#### <a name="method-simulator-enable"></a> .simulatorEnable()
 
 To enter simulate mode. Must call [`.connect()`](#method-connect) after.
 
@@ -896,7 +847,7 @@ To enter simulate mode. Must call [`.connect()`](#method-connect) after.
 
 **_Returns_** a promise, fulfilled if able to enter simulate mode, reject if not.
 
-#### <a name="cyton-method-simulator-disable"></a> .simulatorDisable()
+#### <a name="method-simulator-disable"></a> .simulatorDisable()
 
 To leave simulate mode.
 
@@ -904,27 +855,27 @@ To leave simulate mode.
 
 **_Returns_** a promise, fulfilled if able to stop simulate mode, reject if not.
 
-#### <a name="cyton-method-sntp"></a> .sntp
+#### <a name="method-sntp"></a> .sntp
 
 Extends the popular SNTP package on [npmjs](https://www.npmjs.com/package/sntp)
 
-#### <a name="cyton-method-sntp-get-offset"></a> .sntpGetOffset()
+#### <a name="method-sntp-get-offset"></a> .sntpGetOffset()
 
 Stateful method for querying the current offset only when the last one is too old. (defaults to daily)
 
 **_Returns_** a promise with the time offset
 
-#### <a name="cyton-method-sntp-start"></a> .sntpStart()
+#### <a name="method-sntp-start"></a> .sntpStart()
 
 This starts the SNTP server and gets it to remain in sync with the SNTP server.
 
 **_Returns_** a promise if the module was able to sync with NTP server.
 
-#### <a name="cyton-method-sntp-stop"></a> .sntpStop()
+#### <a name="method-sntp-stop"></a> .sntpStop()
 
 Stops the SNTP from updating
 
-#### <a name="cyton-method-soft-reset"></a> .softReset()
+#### <a name="method-soft-reset"></a> .softReset()
 
 Sends a soft reset command to the board.
 
@@ -932,7 +883,7 @@ Sends a soft reset command to the board.
 
 **_Returns_** a promise, fulfilled if the command was sent to the write queue.
 
-#### <a name="cyton-method-stream-start"></a> .streamStart()
+#### <a name="method-stream-start"></a> .streamStart()
 
 Sends a start streaming command to the board.
 
@@ -940,7 +891,7 @@ Sends a start streaming command to the board.
 
 **_Returns_** a promise, fulfilled if the command was sent to the write queue, rejected if unable.
 
-#### <a name="cyton-method-stream-stop"></a> .streamStop()
+#### <a name="method-stream-stop"></a> .streamStop()
 
 Sends a stop streaming command to the board.
 
@@ -948,7 +899,7 @@ Sends a stop streaming command to the board.
 
 **_Returns_** a promise, fulfilled if the command was sent to the write queue, rejected if unable.
 
-#### <a name="cyton-method-sync-clocks"></a> .syncClocks()
+#### <a name="method-sync-clocks"></a> .syncClocks()
 
 Send the command to tell the board to start the syncing protocol. Must be connected, streaming and using version +2 firmware.
 
@@ -956,7 +907,7 @@ Send the command to tell the board to start the syncing protocol. Must be connec
 
 **_Returns_** {Promise} resolves if the command was sent to the write queue, rejects if unable.
 
-#### <a name="cyton-method-sync-clocks-full"></a> .syncClocksFull()
+#### <a name="method-sync-clocks-full"></a> .syncClocksFull()
 
 Send the command to tell the board to start the syncing protocol. Must be connected, streaming and using v2 firmware. Uses the `synced` event to ensure multiple syncs don't overlap.
 
@@ -1047,7 +998,7 @@ ourBoard.connect(portName)
 
 ```
 
-#### <a name="cyton-method-test-signal"></a> .testSignal(signal)
+#### <a name="method-test-signal"></a> .testSignal(signal)
 
 Apply the internal test signal to all channels.
 
@@ -1065,13 +1016,13 @@ A String indicating which test signal to apply
 
 **_Returns_** a promise, if the commands were sent to write buffer.
 
-#### <a name="cyton-method-time"></a> .time()
+#### <a name="method-time"></a> .time()
 
 Uses `._sntpNow()` time when sntpTimeSync specified `true` in options, or else Date.now() for time.
 
 **_Returns_** time since UNIX epoch in ms.
 
-#### <a name="cyton-method-using-version-two-firmware"></a> .usingVersionTwoFirmware()
+#### <a name="method-using-version-two-firmware"></a> .usingVersionTwoFirmware()
 
 Convenience method to determine if you can use firmware v2.x.x capabilities.
 
@@ -1079,7 +1030,7 @@ Convenience method to determine if you can use firmware v2.x.x capabilities.
 
 **_Returns_** a boolean, true if using firmware version 2 or greater.
 
-#### <a name="cyton-method-write"></a> .write(dataToWrite)
+#### <a name="method-write"></a> .write(dataToWrite)
 
 Send commands to the board. Due to the OpenBCI board firmware 1.0, a 10ms spacing **must** be observed between every command sent to the board. This method handles the timing and spacing between characters by adding characters to a global write queue and pulling from it every 10ms. If you are using firmware version +2.0 then you no spacing will be used.
 
@@ -1111,45 +1062,45 @@ ourBoard.write('c');
 ourBoard.write('o');
 ```
 
-### <a name="cyton-event"></a> Events:
+### <a name="event"></a> Events:
 
-#### <a name="cyton-event-close"></a> .on('close', callback)
+#### <a name="event-close"></a> .on('close', callback)
 
 Emitted when the serial connection to the board is closed.
 
-#### <a name="cyton-event-close"></a> .on('droppedPacket', callback)
+#### <a name="event-close"></a> .on('droppedPacket', callback)
 
 Emitted when a packet (or packets) are dropped. Returns an array.
 
-#### <a name="cyton-event-error"></a> .on('error', callback)
+#### <a name="event-error"></a> .on('error', callback)
 
 Emitted when there is an on the serial port.
 
-#### <a name="cyton-event-impedance-array"></a> .on('impedanceArray', callback)
+#### <a name="event-impedance-array"></a> .on('impedanceArray', callback)
 
 Emitted when there is a new impedanceArray available. Returns an array.
 
-#### <a name="cyton-event-query"></a> .on('query', callback)
+#### <a name="event-query"></a> .on('query', callback)
 
 Emitted resulting in a call to [`.getChannelSettings()`](#method-get-settings-for-channel) with the channelSettingsObject
 
-#### <a name="cyton-event-raw-data-packet"></a> .on('rawDataPacket', callback)
+#### <a name="event-raw-data-packet"></a> .on('rawDataPacket', callback)
 
 Emitted when there is a new raw data packet available.
 
-#### <a name="cyton-event-ready"></a> .on('ready', callback)
+#### <a name="event-ready"></a> .on('ready', callback)
 
 Emitted when the board is in a ready to start streaming state.
 
-#### <a name="cyton-event-sample"></a> .on('sample', callback)
+#### <a name="event-sample"></a> .on('sample', callback)
 
 Emitted when there is a new sample available.
 
-#### <a name="cyton-event-sample"></a> .on('synced', callback)
+#### <a name="event-sample"></a> .on('synced', callback)
 
 Emitted when there is a new sample available.
 
-### <a name="cyton-constants"></a> Constants:
+### <a name="constants"></a> Constants:
 
 To use the constants file simply:
 ```js
@@ -1158,7 +1109,7 @@ const k = require('openbci').Constants;
 console.log(k.OBCISimulatorPortName); // prints OpenBCISimulator to the console.
 ```
 
-### <a name="cyton-constants-obcisimulatorportname"></a> .OBCISimulatorPortName
+### <a name="constants-obcisimulatorportname"></a> .OBCISimulatorPortName
 
 The name of the simulator port.
 
@@ -1238,7 +1189,7 @@ MIT
 
 ## <a name="roadmap"></a> Roadmap:
 
-1. Ganglion integration (2.x)
+1. Ganglion integration (3.x)
 2. Compatible with node streams (3.x)
 3. Remove factory paradigm from main file (3.x)
 5. ES6/ES7 total adoption (3.x)

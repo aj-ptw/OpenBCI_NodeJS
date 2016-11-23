@@ -338,12 +338,9 @@ const obciRadioBaudRateFast = 230400;
 const obciRadioBaudRateFastStr = 'fast';
 
 /** Emitters */
-const obciEmitterBlePoweredUp = 'blePoweredOn';
 const obciEmitterClose = 'close';
 const obciEmitterDroppedPacket = 'droppedPacket';
 const obciEmitterError = 'error';
-const obciEmitterGanglionFound = 'ganglionFound';
-const obciEmitterImpedance = 'impedance';
 const obciEmitterImpedanceArray = 'impedanceArray';
 const obciEmitterMessage = 'message';
 const obciEmitterQuery = 'query';
@@ -351,54 +348,6 @@ const obciEmitterRawDataPacket = 'rawDataPacket';
 const obciEmitterReady = 'ready';
 const obciEmitterSample = 'sample';
 const obciEmitterSynced = 'synced';
-
-/** Ganglion */
-const obciGanglionBleSearchTime = 20000; // ms
-const obciGanglionByteIdRawData = 0;
-const obciGanglionByteIdSampleMax = 127;
-const obciGanglionByteIdSampleMin = 1;
-const obciGanglionByteIdAccel = 128;
-const obciGanglionByteIdImpedanceChannel1 = 129;
-const obciGanglionByteIdImpedanceChannel2 = 130;
-const obciGanglionByteIdImpedanceChannel3 = 131;
-const obciGanglionByteIdImpedanceChannel4 = 132;
-const obciGanglionByteIdImpedanceChannelReference = 133;
-const obciGanglionByteIdMultiPacket = 134;
-const obciGanglionByteIdMultiPacketStop = 135;
-const obciGanglionPacketSize = 20;
-const obciGanglionSamplesPerPacket = 2;
-const obciGanglionPacket = {
-  byteId: 0,
-  dataStart: 1,
-  dataStop: 20
-};
-const obciGanglionMCP3912Gain = 1.0;  // assumed gain setting for MCP3912.  NEEDS TO BE ADJUSTABLE JM
-const obciGanglionMCP3912Vref = 1.2;  // reference voltage for ADC in MCP3912 set in hardware
-const obciGanglionPrefix = 'Ganglion';
-const obciGanglionSyntheticDataEnable = 't';
-const obciGanglionSyntheticDataDisable = 'T';
-const obciGanglionImpedanceStart = 'z';
-const obciGanglionImpedanceStop = 'Z';
-const obciGanglionScaleFactorPerCountVolts = obciGanglionMCP3912Vref / (8388607.0 * obciGanglionMCP3912Gain * 1.5 * 51.0);
-
-/** Simblee */
-const simbleeUuidService = 'fe84';
-const simbleeUuidReceive = '2d30c082f39f4ce6923f3484ea480596';
-const simbleeUuidSend = '2d30c083f39f4ce6923f3484ea480596';
-const simbleeUuidDisconnect = '2d30c084f39f4ce6923f3484ea480596';
-
-/** Noble */
-const obciNobleEmitterPeripheralConnect = 'connect';
-const obciNobleEmitterPeripheralDisconnect = 'disconnect';
-const obciNobleEmitterPeripheralDiscover = 'discover';
-const obciNobleEmitterPeripheralServicesDiscover = 'servicesDiscover';
-const obciNobleEmitterServiceCharacteristicsDiscover = 'characteristicsDiscover';
-const obciNobleEmitterServiceRead = 'read';
-const obciNobleEmitterDiscover = 'discover';
-const obciNobleEmitterScanStart = 'scanStart';
-const obciNobleEmitterScanStop = 'scanStop';
-const obciNobleEmitterStateChange = 'stateChange';
-const obciNobleStatePoweredOn = 'poweredOn';
 
 module.exports = {
   /** Turning channels off */
@@ -954,60 +903,16 @@ module.exports = {
   OBCIRadioBaudRateFastStr: obciRadioBaudRateFastStr,
   getVersionNumber,
   /** Emitters */
-  OBCIEmitterBlePoweredUp: obciEmitterBlePoweredUp,
   OBCIEmitterClose: obciEmitterClose,
   OBCIEmitterDroppedPacket: obciEmitterDroppedPacket,
   OBCIEmitterError: obciEmitterError,
-  OBCIEmitterGanglionFound: obciEmitterGanglionFound,
-  OBCIEmitterImpedance: obciEmitterImpedance,
   OBCIEmitterImpedanceArray: obciEmitterImpedanceArray,
   OBCIEmitterMessage: obciEmitterMessage,
   OBCIEmitterQuery: obciEmitterQuery,
   OBCIEmitterRawDataPacket: obciEmitterRawDataPacket,
   OBCIEmitterReady: obciEmitterReady,
   OBCIEmitterSample: obciEmitterSample,
-  OBCIEmitterSynced: obciEmitterSynced,
-  /** Ganglion */
-  OBCIGanglionBleSearchTime: obciGanglionBleSearchTime,
-  OBCIGanglionByteIdRawData: obciGanglionByteIdRawData,
-  OBCIGanglionByteIdSampleMax: obciGanglionByteIdSampleMax,
-  OBCIGanglionByteIdSampleMin: obciGanglionByteIdSampleMin,
-  OBCIGanglionByteIdAccel: obciGanglionByteIdAccel,
-  OBCIGanglionByteIdImpedanceChannel1: obciGanglionByteIdImpedanceChannel1,
-  OBCIGanglionByteIdImpedanceChannel2: obciGanglionByteIdImpedanceChannel2,
-  OBCIGanglionByteIdImpedanceChannel3: obciGanglionByteIdImpedanceChannel3,
-  OBCIGanglionByteIdImpedanceChannel4: obciGanglionByteIdImpedanceChannel4,
-  OBCIGanglionByteIdImpedanceChannelReference: obciGanglionByteIdImpedanceChannelReference,
-  OBCIGanglionByteIdMultiPacket: obciGanglionByteIdMultiPacket,
-  OBCIGanglionByteIdMultiPacketStop: obciGanglionByteIdMultiPacketStop,
-  OBCIGanglionMCP3912Gain: obciGanglionMCP3912Gain,  // assumed gain setting for MCP3912.  NEEDS TO BE ADJUSTABLE JM
-  OBCIGanglionMCP3912Vref: obciGanglionMCP3912Vref,  // reference voltage for ADC in MCP3912 set in hardware
-  OBCIGanglionPacketSize: obciGanglionPacketSize,
-  OBCIGanglionPacket: obciGanglionPacket,
-  OBCIGanglionPrefix: obciGanglionPrefix,
-  OBCIGanglionSamplesPerPacket: obciGanglionSamplesPerPacket,
-  OBCIGanglionSyntheticDataEnable: obciGanglionSyntheticDataEnable,
-  OBCIGanglionSyntheticDataDisable: obciGanglionSyntheticDataDisable,
-  OBCIGanglionImpedanceStart: obciGanglionImpedanceStart,
-  OBCIGanglionImpedanceStop: obciGanglionImpedanceStop,
-  OBCIGanglionScaleFactorPerCountVolts: obciGanglionScaleFactorPerCountVolts,
-  /** Simblee */
-  SimbleeUuidService: simbleeUuidService,
-  SimbleeUuidReceive: simbleeUuidReceive,
-  SimbleeUuidSend: simbleeUuidSend,
-  SimbleeUuidDisconnect: simbleeUuidDisconnect,
-  /** Noble */
-  OBCINobleEmitterPeripheralConnect: obciNobleEmitterPeripheralConnect,
-  OBCINobleEmitterPeripheralDisconnect: obciNobleEmitterPeripheralDisconnect,
-  OBCINobleEmitterPeripheralDiscover: obciNobleEmitterPeripheralDiscover,
-  OBCINobleEmitterPeripheralServicesDiscover: obciNobleEmitterPeripheralServicesDiscover,
-  OBCINobleEmitterServiceCharacteristicsDiscover: obciNobleEmitterServiceCharacteristicsDiscover,
-  OBCINobleEmitterServiceRead: obciNobleEmitterServiceRead,
-  OBCINobleEmitterDiscover: obciNobleEmitterDiscover,
-  OBCINobleEmitterScanStart: obciNobleEmitterScanStart,
-  OBCINobleEmitterScanStop: obciNobleEmitterScanStop,
-  OBCINobleEmitterStateChange: obciNobleEmitterStateChange,
-  OBCINobleStatePoweredOn: obciNobleStatePoweredOn
+  OBCIEmitterSynced: obciEmitterSynced
 };
 
 /**
