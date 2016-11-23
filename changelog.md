@@ -5,7 +5,17 @@
 
 ### Breaking Changes
 * Change name of `OpenBCIBoard` to `Cyton` to follow new naming convention.
+    Simply change:
+    ```ecmascript 6
+    const OpenBCIBoard = require('openbci').OpenBCIBoard;
+    const ourBoard = new OpenBCIBoard();
+    ```
+    ```ecmascript 6
+    const Cyton = require('openbci').Cyton;
+    const ourBoard = new Cyton();
+    ```
 * Major change to how board is initialized with removal of `factory` paradigm.
+* Drop support for Node 4 and 5 due to lack of EMACS 6
 
 # 1.4.1
 
