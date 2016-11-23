@@ -94,6 +94,20 @@ paths:
           description: Good data packet
         500:
           description: Bad data packet
+  /i:
+    post:
+      description: Impedance Data from the OpenBCI Ganglion board
+      parameters:
+        - name: channelNumber
+          description: The channel number, either 1, 2, 3, 4 or 0 for reference
+          in: res
+          type: integer
+          required: true
+        - name: impedance value
+          description: The impedance value in ohms
+          in: res
+          type: integer
+          required: true
   /l:
     post:
       description: Log message from the node

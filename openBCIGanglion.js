@@ -744,7 +744,7 @@ Ganglion.prototype._processImpedanceData = function (data) {
       channelNumber = 4;
       break;
     case k.OBCIGanglionByteIdImpedanceChannelReference:
-      channelNumber = 'reference';
+      channelNumber = 0;
       break;
   }
 

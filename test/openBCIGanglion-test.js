@@ -287,7 +287,7 @@ describe('#ganglion', function () {
 
     // Channel Reference
     totalEvents++;
-    expectedChannelNumber = 'reference';
+    expectedChannelNumber = 0;
     impPre[0] = k.OBCIGanglionByteIdImpedanceChannelReference;
     expectedReturnValue = {
       channelNumber: expectedChannelNumber,
