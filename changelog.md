@@ -1,7 +1,6 @@
 # 2.0.0
 
 ### New Features
-* GANGLION! The only driver for the Ganglion out there! Woo!
 * `index.js` file allows for ES6 destructing
 
 ### Breaking Changes
