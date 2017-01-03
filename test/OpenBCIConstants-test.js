@@ -443,6 +443,13 @@ describe('OpenBCIConstants', function () {
     it('sets max of 16', function () {
       assert.equal('C', k.OBCIChannelMaxNumber16);
     });
+    it('has correct return messages', function () {
+      assert.equal('', k.OBCIChannelMaxNumber8NoDaisyToRemove);
+      assert.equal('daisy removed', k.OBCIChannelMaxNumber8SuccessDaisyRemoved);
+      assert.equal('16', k.OBCIChannelMaxNumber16DaisyAlreadyAttached);
+      assert.equal('daisy attached16', k.OBCIChannelMaxNumber16DaisyAttached);
+      assert.equal('no daisy to attach!', k.OBCIChannelMaxNumber16NoDaisyAttached);
+    });
   });
   describe('On board filters', function () {
     it('disable', function () {

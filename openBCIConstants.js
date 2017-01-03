@@ -156,6 +156,11 @@ const obciMiscSoftReset = 'v';
 /** 16 Channel Commands */
 const obciChannelMaxNumber8 = 'c';
 const obciChannelMaxNumber16 = 'C';
+const obciChannelMaxNumber8NoDaisyToRemove = '';
+const obciChannelMaxNumber8SuccessDaisyRemoved = 'daisy removed';
+const obciChannelMaxNumber16DaisyAlreadyAttached = '16';
+const obciChannelMaxNumber16DaisyAttached = 'daisy attached16';
+const obciChannelMaxNumber16NoDaisyAttached = 'no daisy to attach!8';
 
 /** 60Hz line filter */
 const obciFilterDisable = 'g';
@@ -724,6 +729,11 @@ module.exports = {
   /** 16 Channel Commands */
   OBCIChannelMaxNumber8: obciChannelMaxNumber8,
   OBCIChannelMaxNumber16: obciChannelMaxNumber16,
+  OBCIChannelMaxNumber8NoDaisyToRemove: obciChannelMaxNumber8NoDaisyToRemove,
+  OBCIChannelMaxNumber8SuccessDaisyRemoved: obciChannelMaxNumber8SuccessDaisyRemoved,
+  OBCIChannelMaxNumber16DaisyAlreadyAttached: obciChannelMaxNumber16DaisyAlreadyAttached,
+  OBCIChannelMaxNumber16DaisyAttached: obciChannelMaxNumber16DaisyAttached,
+  OBCIChannelMaxNumber16NoDaisyAttached: obciChannelMaxNumber16NoDaisyAttached,
   /** Filters */
   OBCIFilterDisable: obciFilterDisable,
   OBCIFilterEnable: obciFilterEnable,
