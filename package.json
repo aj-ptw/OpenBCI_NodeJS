@@ -19,6 +19,7 @@
     "gaussian": "^1.0.0",
     "mathjs": "^3.3.0",
     "performance-now": "^0.2.0",
+    "portscanner": "^2.1.1",
     "serialport": "4.0.1",
     "sntp": "^2.0.0",
     "streamsearch": "^0.1.2"
