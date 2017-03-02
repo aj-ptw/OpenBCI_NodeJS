@@ -293,6 +293,7 @@ describe('openBCISimulator', function () {
         simulator.on('data', function (data) {
           expect(data.toString().match(`daisy removed${k.OBCIParseEOT}`)).to.not.equal(null);
           if (data.toString().match(k.OBCIParseEOT)) {
+            expect(simulator.options.daisy).to.equal(false);
             done();
           }
         });
@@ -314,6 +315,7 @@ describe('openBCISimulator', function () {
         simulator.on('data', function (data) {
           expect(data.toString().match(`daisy attached16`)).to.not.equal(null);
           if (data.toString().match(k.OBCIParseEOT)) {
+            expect(simulator.options.daisy).to.equal(true);
             done();
           }
         });

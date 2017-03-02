@@ -340,7 +340,9 @@ const obciRadioBaudRateFastStr = 'fast';
 /** Emitters */
 const obciEmitterClose = 'close';
 const obciEmitterDroppedPacket = 'droppedPacket';
+const obciEmitterEot = 'eot';
 const obciEmitterError = 'error';
+const obciEmitterHardSet = 'hardSet';
 const obciEmitterImpedanceArray = 'impedanceArray';
 const obciEmitterQuery = 'query';
 const obciEmitterRawDataPacket = 'rawDataPacket';
@@ -904,7 +906,9 @@ module.exports = {
   /** Emitters */
   OBCIEmitterClose: obciEmitterClose,
   OBCIEmitterDroppedPacket: obciEmitterDroppedPacket,
+  OBCIEmitterEot: obciEmitterEot,
   OBCIEmitterError: obciEmitterError,
+  OBCIEmitterHardSet: obciEmitterHardSet,
   OBCIEmitterImpedanceArray: obciEmitterImpedanceArray,
   OBCIEmitterQuery: obciEmitterQuery,
   OBCIEmitterRawDataPacket: obciEmitterRawDataPacket,

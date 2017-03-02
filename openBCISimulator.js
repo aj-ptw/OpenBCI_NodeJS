@@ -255,6 +255,7 @@ function OpenBCISimulatorFactory () {
         break;
       case k.OBCIChannelMaxNumber8:
         if (this.options.daisy) {
+          this.options.daisy = false;
           this._output(new Buffer(k.OBCIChannelMaxNumber8SuccessDaisyRemoved));
           this._printEOT();
         } else {
@@ -267,6 +268,7 @@ function OpenBCISimulatorFactory () {
           this._printEOT();
         } else {
           if (this.options.daisyCanBeAttached) {
+            this.options.daisy = true;
             this._output(new Buffer(k.OBCIChannelMaxNumber16DaisyAttached));
             this._printEOT();
           } else {

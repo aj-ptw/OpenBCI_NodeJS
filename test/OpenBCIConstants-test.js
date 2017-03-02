@@ -448,7 +448,7 @@ describe('OpenBCIConstants', function () {
       assert.equal('daisy removed', k.OBCIChannelMaxNumber8SuccessDaisyRemoved);
       assert.equal('16', k.OBCIChannelMaxNumber16DaisyAlreadyAttached);
       assert.equal('daisy attached16', k.OBCIChannelMaxNumber16DaisyAttached);
-      assert.equal('no daisy to attach!', k.OBCIChannelMaxNumber16NoDaisyAttached);
+      assert.equal('no daisy to attach!8', k.OBCIChannelMaxNumber16NoDaisyAttached);
     });
   });
   describe('On board filters', function () {
@@ -1447,8 +1447,14 @@ describe('OpenBCIConstants', function () {
     it('Event Emitter Dropped Packet', function () {
       assert.equal('droppedPacket', k.OBCIEmitterDroppedPacket);
     });
+    it('Event Emitter EOT', function () {
+      assert.equal('eot', k.OBCIEmitterEot);
+    });
     it('Event Emitter Error', function () {
       assert.equal('error', k.OBCIEmitterError);
+    });
+    it('Event Emitter Hard Set', function () {
+      assert.equal('hardSet', k.OBCIEmitterHardSet);
     });
     it('Event Emitter Impedance Array', function () {
       assert.equal('impedanceArray', k.OBCIEmitterImpedanceArray);
