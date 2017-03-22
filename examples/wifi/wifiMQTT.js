@@ -1,48 +1,37 @@
-// var mqtt = require('mqtt')
-// var client  = mqtt.connect('mqtt://broker.hivemq.com');
-//
-// client.on('connect', function () {
-//   client.subscribe('openbci/node');
-//   client.publish('openbci/wifi', 'Hello ESP8266')
-// })
-//
-// client.on('message', function (topic, message) {
-//   // message is Buffer
-//   console.log(message.toString());
-//   client.end();
-// })
-//
-// var client = mqtt.createClient();
-//
-// client.subscribe("mqtt/demo");
-//
-// client.on("message", function(topic, payload) {
-//   alert([topic, payload].join(": "));
-//   client.end();
-// });
-//
-// client.publish("mqtt/demo", "hello world!");
+'use strict';
 
-var ascoltatori = require('ascoltatori');
-var settings = {
-  type: 'zmq',
-  json: false,
-  zmq: require("zmq"),
-  port: "tcp://127.0.0.1:33333",
-  controlPort: "tcp://127.0.0.1:33334",
-  delay: 10
-};
+var aedes = require('aedes')();
+var server = require('net').createServer(aedes.handle);
+var port = 1883;
 
-ascoltatori.build(settings, function (ascoltatore) {
-  // subscribes to a topic
-  ascoltatore.subscribe('openbci/node', function() {
-    console.log(arguments);
-    // { '0': 'hello', '1': 'a message' }
-  });
+server.listen(port, function () {
+  console.log('server listening on port', port)
+});
 
-  // publishes a message to the topic 'hello'
-  ascoltatore.publish('openbci/wifi', 'a message', function() {
-    console.log('message published');
-  });
-  // ...
+
+aedes.on('clientError', function (client, err) {
+  console.log('client error', client.id, err.message, err.stack)
+});
+
+aedes.on('publish', function (packet, client) {
+  if (client) {
+    console.log('message from client', client.id)
+  }
+});
+
+aedes.on('client', function (client) {
+  console.log('new client', client.id)
+});
+
+aedes.publish({
+  cmd: 'publish',
+  qos: 2,
+  topic: 'openbci/wifi',
+  payload: 'hello',
+  retain: false
+});
+
+aedes.subscribe('openbci/node', function(packet, cb) {
+  console.log('packet', packet);
+  cb();
 });
