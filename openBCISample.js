@@ -436,11 +436,13 @@ var sampleModule = {
   doesBufferHaveEOT,
   findV2Firmware,
   isFailureInBuffer,
+  isCommsSystemDown,
   isSuccessInBuffer,
   isTimeSyncSetConfirmationInBuffer,
   makeTailByteFromPacketType,
   isStopByte,
   newSyncObject,
+  stripAfterEOTBuffer,
   stripToEOTBuffer,
   /**
   * @description Checks to make sure the previous sample number is one less
@@ -1029,6 +1031,43 @@ function isSuccessInBuffer (dataBuffer) {
 
   // Check and see if there is a match
   return s.matches >= 1;
+}
+
+/**
+ * @description Used to slice a buffer for the EOT '$$$'.
+ * @param dataBuffer {Buffer} - The buffer of some length to parse
+ * @returns {Boolean} - If equal to radio system down message.
+ */
+function isCommsSystemDown(dataBuffer) {
+  if (k.isNull(dataBuffer)) return false;
+  dataBuffer = stripAfterEOTBuffer(dataBuffer);
+  return dataBuffer.toString() === `${k.OBCIErrorRadioSystemDown}${k.OBCIParseEOT}`;
+}
+
+/**
+ * @description Used to slice anything after EOT '$$$'.
+ * @param dataBuffer {Buffer} - The buffer of some length to parse
+ * @returns {Buffer} - The buffer to EOT.
+ */
+function stripAfterEOTBuffer (dataBuffer) {
+  if (k.isNull(dataBuffer)) return null;
+  let indexOfEOT = dataBuffer.indexOf(k.OBCIParseEOT);
+  if (indexOfEOT >= 0) {
+    indexOfEOT += k.OBCIParseEOT.length;
+  } else {
+    return dataBuffer;
+  }
+
+  if (indexOfEOT <= dataBuffer.byteLength) {
+    if (k.getVersionNumber(process.version) >= 6) {
+      // From introduced in node version 6.x.x
+      return Buffer.from(dataBuffer.slice(0, indexOfEOT));
+    } else {
+      return new Buffer(dataBuffer.slice(0, indexOfEOT));
+    }
+  } else {
+    return null;
+  }
 }
 
 /**

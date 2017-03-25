@@ -55,6 +55,7 @@ describe('openBCISimulator', function () {
       });
       expect(simulator.options.sampleRate).to.equal(250); // produce samples at same rate
     });
+
     it('should use provided sample rate even if daisy is true', function () {
       simulator = new openBCISimulator.OpenBCISimulator(portName, {
         daisy: true,
@@ -141,6 +142,42 @@ describe('openBCISimulator', function () {
           }
         });
       }
+    });
+    it('should not do any writing if firmware v1 and board failure', function (done) {
+      var simulator = new openBCISimulator.OpenBCISimulator(k.OBCISimulatorPortName, {
+        firmwareVersion: k.OBCIFirmwareV1,
+        boardFailure: true
+      });
+      simulator.once('open', () => {
+        simulator.write(k.OBCIStreamStart, (err) => {
+          expect(simulator.streaming).to.be.false;
+          expect(err).to.be.null;
+          if (err) {
+            done(err);
+          } else {
+            done();
+          }
+        });
+      });
+    });
+    it('should refuse to write if firmware v2+ and board failure', function (done) {
+      var simulator = new openBCISimulator.OpenBCISimulator(k.OBCISimulatorPortName, {
+        firmwareVersion: k.OBCIFirmwareV2,
+        boardFailure: true
+      });
+      simulator.once('open', () => {
+        simulator.once('data', function (data) {
+          expect(data.toString()).to.equal(`${k.OBCIErrorRadioSystemDown}${k.OBCIParseEOT}`);
+          done();
+        });
+        simulator.write(k.OBCIStreamStart, (err) => {
+          expect(simulator.streaming).to.be.false;
+          expect(err).to.be.null;
+          if (err) {
+            done(err);
+          }
+        });
+      });
     });
   });
   describe('#close', function () {

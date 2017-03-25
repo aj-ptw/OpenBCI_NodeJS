@@ -69,6 +69,7 @@ describe('openbci-sdk', function () {
       var board = new openBCIBoard.OpenBCIBoard();
       expect(board.options.boardType).to.equal(k.OBCIBoardDefault);
       expect(board.options.baudRate).to.equal(115200);
+      expect(board.options.commsDownDetection).to.be.true;
       expect(board.options.hardSet).to.be.false;
       expect(board.options.simulate).to.be.false;
       expect(board.options.simulatorBoardFailure).to.be.false;
@@ -120,6 +121,16 @@ describe('openbci-sdk', function () {
         baudrate: 9600
       });
       (ourBoard2.options.baudRate).should.equal(9600);
+    });
+    it('should be able to disable comms down detection', () => {
+      var ourBoard1 = new openBCIBoard.OpenBCIBoard({
+        commsDownDetection: false
+      });
+      (ourBoard1.options.commsDownDetection).should.equal(false);
+      var ourBoard2 = new openBCIBoard.OpenBCIBoard({
+        commsdowndetection: false
+      });
+      (ourBoard2.options.commsDownDetection).should.equal(false);
     });
     it('should be able to enter simulate mode from the constructor', () => {
       var board = new openBCIBoard.OpenBCIBoard({
@@ -418,7 +429,7 @@ describe('openbci-sdk', function () {
       ourBoard = new openBCIBoard.OpenBCIBoard({
         verbose: true,
         simulate: true,
-        simulatorBoardFailure: true,
+        simulatorBoardFailure: false,
         simulatorDaisyModuleAttached: true,
         simulatorDaisyModuleCanBeAttached: false,
         simulatorFirmwareVersion: k.OBCIFirmwareV2,
@@ -440,7 +451,7 @@ describe('openbci-sdk', function () {
             expect(simOptions).to.be.an('object');
             expect(simOptions.accel).to.be.false;
             expect(simOptions.alpha).to.be.false;
-            expect(simOptions.boardFailure).to.be.true;
+            expect(simOptions.boardFailure).to.be.false;
             expect(simOptions.daisy).to.be.true;
             expect(simOptions.daisyCanBeAttached).to.be.false;
             expect(simOptions.drift).to.be.below(0);
@@ -455,6 +466,35 @@ describe('openbci-sdk', function () {
             ourBoard.disconnect().then(done).catch(done);
           });
         }).catch(err => done(err));
+    });
+    it('should reject when board failure with firmware version 2', function (done) {
+      ourBoard = new openBCIBoard.OpenBCIBoard({
+        simulate: true,
+        simulatorBoardFailure: true,
+        simulatorFirmwareVersion: k.OBCIFirmwareV2
+      });
+
+      ourBoard.connect(k.OBCISimulatorPortName)
+        .then(ourBoard.disconnect)
+        .then(() => {
+          done('should not have resolved because of board failure')
+        })
+        .catch((err) => {
+          expect(err).to.equal(k.OBCIErrorRadioSystemDown);
+          done();
+        });
+    });
+    it('should resolve for board failure on firmware version 1', function (done) {
+      ourBoard = new openBCIBoard.OpenBCIBoard({
+        simulate: true,
+        simulatorBoardFailure: true,
+        simulatorFirmwareVersion: k.OBCIFirmwareV1
+      });
+
+      ourBoard.connect(k.OBCISimulatorPortName)
+        .then(ourBoard.disconnect)
+        .then(done)
+        .catch(done);
     });
     it('should be able to set info for default board', function () {
       ourBoard.info.boardType = 'burrito';

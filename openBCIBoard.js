@@ -20,6 +20,7 @@ function OpenBCIFactory () {
   var _options = {
     boardType: [k.OBCIBoardDefault, k.OBCIBoardDaisy, k.OBCIBoardGanglion],
     baudRate: 115200,
+    commsDownDetection: true,
     hardSet: false,
     simulate: false,
     simulatorBoardFailure: false,
@@ -337,6 +338,8 @@ function OpenBCIFactory () {
     this.serial = null;
 
     this.emit('close');
+
+    this.removeAllListeners();
 
     while (this.writeOutArray.length > 0) {
       var command = this.writeOutArray.pop();
@@ -1797,6 +1800,13 @@ function OpenBCIFactory () {
     if (this.buffer) {
       oldDataBuffer = this.buffer;
       data = Buffer.concat([this.buffer, data], data.length + this.buffer.length);
+    }
+
+    if (this.options.commsDownDetection) {
+      if (openBCISample.isCommsSystemDown(data)) {
+        if (this.options.verbose) console.log(k.OBCIErrorRadioSystemDown);
+        this.emit(k.OBCIEmitterError, new Error(k.OBCIErrorRadioSystemDown));
+      }
     }
 
     switch (this.curParsingMode) {

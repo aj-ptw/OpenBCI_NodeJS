@@ -1257,6 +1257,132 @@ $$$`);
       expect(openBCISample.stripToEOTBuffer(totalBuf)).to.equal(null);
     });
   });
+  describe('#stripAfterEOTBuffer', function () {
+    it('should be ok is null', function () {
+      expect(openBCISample.stripAfterEOTBuffer(null)).to.equal(null);
+    });
+    it('should return the buffer if no EOT', function () {
+      let buf = null;
+      if (k.getVersionNumber(process.version) >= 6) {
+        // From introduced in node version 6.x.x
+        buf = Buffer.from('tacos are delicious');
+      } else {
+        buf = new Buffer('tacos are delicious');
+      }
+      expect(openBCISample.stripAfterEOTBuffer(buf).toString()).to.equal(buf.toString());
+    });
+    it('should return just EOT', function () {
+      let eotBuf = null;
+      let bufPost = null;
+      if (k.getVersionNumber(process.version) >= 6) {
+        // From introduced in node version 6.x.x
+        eotBuf = Buffer.from(k.OBCIParseEOT);
+        bufPost = Buffer.from('tacos');
+      } else {
+        eotBuf = new Buffer(k.OBCIParseEOT);
+        bufPost = new Buffer('tacos');
+      }
+
+      let totalBuf = Buffer.concat([eotBuf, bufPost]);
+      expect(openBCISample.stripAfterEOTBuffer(totalBuf).toString()).to.equal(eotBuf.toString());
+    });
+    it('should slice off the buffer after eot $$$', function () {
+      let bufPre = null;
+      let eotBuf = null;
+      let bufPost = null;
+      if (k.getVersionNumber(process.version) >= 6) {
+        // From introduced in node version 6.x.x
+        bufPre = Buffer.from('tacos are delicious');
+        eotBuf = Buffer.from(k.OBCIParseEOT);
+        bufPost = Buffer.from('tacos');
+      } else {
+        bufPre = new Buffer('tacos are delicious');
+        eotBuf = new Buffer(k.OBCIParseEOT);
+        bufPost = new Buffer('tacos');
+      }
+
+      let totalBuf = Buffer.concat([bufPre, eotBuf, bufPost]);
+      expect(openBCISample.stripAfterEOTBuffer(totalBuf).toString()).to.equal(Buffer.concat([bufPre, eotBuf]).toString());
+    });
+    it('should return everything up to eot $$$', function () {
+      let bufPre = null;
+      let eotBuf = null;
+      if (k.getVersionNumber(process.version) >= 6) {
+        // From introduced in node version 6.x.x
+        bufPre = Buffer.from('tacos are delicious');
+        eotBuf = Buffer.from(k.OBCIParseEOT);
+      } else {
+        bufPre = new Buffer('tacos are delicious');
+        eotBuf = new Buffer(k.OBCIParseEOT);
+      }
+
+      let totalBuf = Buffer.concat([bufPre, eotBuf]);
+      expect(openBCISample.stripAfterEOTBuffer(totalBuf).toString()).to.equal(Buffer.concat([bufPre, eotBuf]).toString());
+    });
+  });
+  describe('#isCommsSystemDown', function () {
+    it('should not find the message when null', function () {
+      expect(openBCISample.isCommsSystemDown(null)).to.equal(false);
+    });
+    it('should not find the message even when wrong and no EOT', function () {
+      let buf = null;
+      if (k.getVersionNumber(process.version) >= 6) {
+        // From introduced in node version 6.x.x
+        buf = Buffer.from('tacos are delicious');
+      } else {
+        buf = new Buffer('tacos are delicious');
+      }
+      expect(openBCISample.isCommsSystemDown(buf)).to.equal(false);
+    });
+    it('should return just EOT', function () {
+      let eotBuf = null;
+      let bufPost = null;
+      if (k.getVersionNumber(process.version) >= 6) {
+        // From introduced in node version 6.x.x
+        eotBuf = Buffer.from(k.OBCIParseEOT);
+        bufPost = Buffer.from('tacos');
+      } else {
+        eotBuf = new Buffer(k.OBCIParseEOT);
+        bufPost = new Buffer('tacos');
+      }
+
+      let totalBuf = Buffer.concat([eotBuf, bufPost]);
+      expect(openBCISample.isCommsSystemDown(totalBuf)).to.equal(false);
+    });
+    it('should slice the buffer after eot $$$', function () {
+      let bufPre = null;
+      let eotBuf = null;
+      let bufPost = null;
+      if (k.getVersionNumber(process.version) >= 6) {
+        // From introduced in node version 6.x.x
+        bufPre = Buffer.from(k.OBCIErrorRadioSystemDown);
+        eotBuf = Buffer.from(k.OBCIParseEOT);
+        bufPost = Buffer.from('tacos');
+      } else {
+        bufPre = new Buffer(k.OBCIErrorRadioSystemDown);
+        eotBuf = new Buffer(k.OBCIParseEOT);
+        bufPost = new Buffer('tacos');
+      }
+
+      let totalBuf = Buffer.concat([bufPre, eotBuf, bufPost]);
+      expect(openBCISample.isCommsSystemDown(totalBuf)).to.equal(true);
+    });
+    it('should slice the buffer after eot $$$', function () {
+      let bufPre = null;
+      let eotBuf = null;
+      if (k.getVersionNumber(process.version) >= 6) {
+        // From introduced in node version 6.x.x
+        bufPre = Buffer.from(k.OBCIErrorRadioSystemDown);
+        eotBuf = Buffer.from(k.OBCIParseEOT);
+      } else {
+        bufPre = new Buffer(k.OBCIErrorRadioSystemDown);
+        eotBuf = new Buffer(k.OBCIParseEOT);
+      }
+
+      let totalBuf = Buffer.concat([bufPre, eotBuf]);
+      expect(openBCISample.isCommsSystemDown(totalBuf)).to.equal(true);
+    });
+  });
   describe('#impedanceTestObjDefault', function () {
     it('should give a new impedance object', function () {
       const expectedImpedanceObj = {

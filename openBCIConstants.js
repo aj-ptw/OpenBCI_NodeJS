@@ -240,6 +240,7 @@ const obciByteStop = 0xC0;
 const errorInvalidByteLength = 'Invalid Packet Byte Length';
 const errorInvalidByteStart = 'Invalid Start Byte';
 const errorInvalidByteStop = 'Invalid Stop Byte';
+const errorRadioSystemDown = 'Failure: Communications timeout - Device failed to poll Host';
 const errorTimeSyncIsNull = "'this.sync.curSyncObj' must not be null";
 const errorTimeSyncNoComma = 'Missed the time sync sent confirmation. Try sync again';
 const errorUndefinedOrNullInput = 'Undefined or Null Input';
@@ -339,6 +340,7 @@ const obciRadioBaudRateFastStr = 'fast';
 
 /** Emitters */
 const obciEmitterClose = 'close';
+const obciEmitterCommsDown = 'commsDown';
 const obciEmitterDroppedPacket = 'droppedPacket';
 const obciEmitterEot = 'eot';
 const obciEmitterError = 'error';
@@ -773,6 +775,7 @@ module.exports = {
   OBCIErrorInvalidByteLength: errorInvalidByteLength,
   OBCIErrorInvalidByteStart: errorInvalidByteStart,
   OBCIErrorInvalidByteStop: errorInvalidByteStop,
+  OBCIErrorRadioSystemDown: errorRadioSystemDown,
   OBCIErrorTimeSyncIsNull: errorTimeSyncIsNull,
   OBCIErrorTimeSyncNoComma: errorTimeSyncNoComma,
   OBCIErrorUndefinedOrNullInput: errorUndefinedOrNullInput,
@@ -905,6 +908,7 @@ module.exports = {
   getVersionNumber,
   /** Emitters */
   OBCIEmitterClose: obciEmitterClose,
+  OBCIEmitterCommsDown: obciEmitterCommsDown,
   OBCIEmitterDroppedPacket: obciEmitterDroppedPacket,
   OBCIEmitterEot: obciEmitterEot,
   OBCIEmitterError: obciEmitterError,

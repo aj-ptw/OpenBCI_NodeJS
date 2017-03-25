@@ -194,91 +194,101 @@ function OpenBCISimulatorFactory () {
       return;
     }
 
-    // TODO: this function assumes a type of Buffer for radio, and a type of String otherwise
-    //       FIX THIS it makes it unusable outside the api code
-    switch (data[0]) {
-      case k.OBCIRadioKey:
-        this._processPrivateRadioMessage(data);
-        break;
-      case k.OBCIStreamStart:
-        if (!this.stream) this._startStream();
-        this.streaming = true;
-        break;
-      case k.OBCIStreamStop:
-        if (this.stream) clearInterval(this.stream); // Stops the stream
-        this.streaming = false;
-        break;
-      case k.OBCIMiscSoftReset:
-        if (this.stream) clearInterval(this.stream);
-        this.streaming = false;
-        this._output(new Buffer(`OpenBCI V3 Simulator On Board ADS1299 Device ID: 0x12345 ${this.options.daisy ? `On Daisy ADS1299 Device ID: 0xFFFFF\n` : ``} LIS3DH Device ID: 0x38422 ${this.options.firmwareVersion === k.OBCIFirmwareV2 ? `Firmware: v2.0.0\n` : ``}$$$`));
-        break;
-      case k.OBCISDLogForHour1:
-      case k.OBCISDLogForHour2:
-      case k.OBCISDLogForHour4:
-      case k.OBCISDLogForHour12:
-      case k.OBCISDLogForHour24:
-      case k.OBCISDLogForMin5:
-      case k.OBCISDLogForMin15:
-      case k.OBCISDLogForMin30:
-      case k.OBCISDLogForSec14:
-        // If we are not streaming, then do verbose output
-        if (!this.streaming) {
-          this._output(new Buffer('Wiring is correct and a card is present.\nCorresponding SD file OBCI_69.TXT\n$$$'));
+    if (this.options.boardFailure) {
+      if (this.options.firmwareVersion !== k.OBCIFirmwareV1) {
+        if (data[0] === k.OBCIRadioKey) {
+          this._processPrivateRadioMessage(data);
+        } else {
+          this._output(new Buffer(`${k.OBCIErrorRadioSystemDown}$$$`));
         }
-        this.sd.active = true;
-        this.sd.startTime = now();
-        break;
-      case k.OBCISDLogStop:
-        if (!this.streaming) {
-          if (this.SDLogActive) {
-            this._output(new Buffer(`Total Elapsed Time: ${now() - this.sd.startTime} ms`));
-            this._output(new Buffer(`Max write time: ${Math.random() * 500} us`));
-            this._output(new Buffer(`Min write time: ${Math.random() * 200} us`));
-            this._output(new Buffer(`Overruns: 0`));
+      }
+    } else {
+      // TODO: this function assumes a type of Buffer for radio, and a type of String otherwise
+      //       FIX THIS it makes it unusable outside the api code
+      switch (data[0]) {
+        case k.OBCIRadioKey:
+          this._processPrivateRadioMessage(data);
+          break;
+        case k.OBCIStreamStart:
+          if (!this.stream) this._startStream();
+          this.streaming = true;
+          break;
+        case k.OBCIStreamStop:
+          if (this.stream) clearInterval(this.stream); // Stops the stream
+          this.streaming = false;
+          break;
+        case k.OBCIMiscSoftReset:
+          if (this.stream) clearInterval(this.stream);
+          this.streaming = false;
+          this._output(new Buffer(`OpenBCI V3 Simulator On Board ADS1299 Device ID: 0x12345 ${this.options.daisy ? `On Daisy ADS1299 Device ID: 0xFFFFF\n` : ``} LIS3DH Device ID: 0x38422 ${this.options.firmwareVersion === k.OBCIFirmwareV2 ? `Firmware: v2.0.0\n` : ``}$$$`));
+          break;
+        case k.OBCISDLogForHour1:
+        case k.OBCISDLogForHour2:
+        case k.OBCISDLogForHour4:
+        case k.OBCISDLogForHour12:
+        case k.OBCISDLogForHour24:
+        case k.OBCISDLogForMin5:
+        case k.OBCISDLogForMin15:
+        case k.OBCISDLogForMin30:
+        case k.OBCISDLogForSec14:
+          // If we are not streaming, then do verbose output
+          if (!this.streaming) {
+            this._output(new Buffer('Wiring is correct and a card is present.\nCorresponding SD file OBCI_69.TXT\n$$$'));
+          }
+          this.sd.active = true;
+          this.sd.startTime = now();
+          break;
+        case k.OBCISDLogStop:
+          if (!this.streaming) {
+            if (this.SDLogActive) {
+              this._output(new Buffer(`Total Elapsed Time: ${now() - this.sd.startTime} ms`));
+              this._output(new Buffer(`Max write time: ${Math.random() * 500} us`));
+              this._output(new Buffer(`Min write time: ${Math.random() * 200} us`));
+              this._output(new Buffer(`Overruns: 0`));
+              this._printEOT();
+            } else {
+              this._output(new Buffer('No open file to close\n'));
+              this._printEOT();
+            }
+          }
+          this.SDLogActive = false;
+          break;
+        case k.OBCISyncTimeSet:
+          if (this.options.firmwareVersion === k.OBCIFirmwareV2) {
+            this.synced = true;
+            setTimeout(() => {
+              this._output(new Buffer(k.OBCISyncTimeSent));
+              this._syncUp();
+            }, 10);
+          }
+          break;
+        case k.OBCIChannelMaxNumber8:
+          if (this.options.daisy) {
+            this.options.daisy = false;
+            this._output(new Buffer(k.OBCIChannelMaxNumber8SuccessDaisyRemoved));
             this._printEOT();
           } else {
-            this._output(new Buffer('No open file to close\n'));
             this._printEOT();
           }
-        }
-        this.SDLogActive = false;
-        break;
-      case k.OBCISyncTimeSet:
-        if (this.options.firmwareVersion === k.OBCIFirmwareV2) {
-          this.synced = true;
-          setTimeout(() => {
-            this._output(new Buffer(k.OBCISyncTimeSent));
-            this._syncUp();
-          }, 10);
-        }
-        break;
-      case k.OBCIChannelMaxNumber8:
-        if (this.options.daisy) {
-          this.options.daisy = false;
-          this._output(new Buffer(k.OBCIChannelMaxNumber8SuccessDaisyRemoved));
-          this._printEOT();
-        } else {
-          this._printEOT();
-        }
-        break;
-      case k.OBCIChannelMaxNumber16:
-        if (this.options.daisy) {
-          this._output(new Buffer(k.OBCIChannelMaxNumber16DaisyAlreadyAttached));
-          this._printEOT();
-        } else {
-          if (this.options.daisyCanBeAttached) {
-            this.options.daisy = true;
-            this._output(new Buffer(k.OBCIChannelMaxNumber16DaisyAttached));
+          break;
+        case k.OBCIChannelMaxNumber16:
+          if (this.options.daisy) {
+            this._output(new Buffer(k.OBCIChannelMaxNumber16DaisyAlreadyAttached));
             this._printEOT();
           } else {
-            this._output(new Buffer(k.OBCIChannelMaxNumber16NoDaisyAttached));
-            this._printEOT();
+            if (this.options.daisyCanBeAttached) {
+              this.options.daisy = true;
+              this._output(new Buffer(k.OBCIChannelMaxNumber16DaisyAttached));
+              this._printEOT();
+            } else {
+              this._output(new Buffer(k.OBCIChannelMaxNumber16NoDaisyAttached));
+              this._printEOT();
+            }
           }
-        }
-        break;
-      default:
-        break;
+          break;
+        default:
+          break;
+      }
     }
 
     /** Handle Callback */

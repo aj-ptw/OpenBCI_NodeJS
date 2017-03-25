@@ -1473,6 +1473,26 @@ describe('OpenBCIConstants', function () {
     });
   });
   describe('Errors', function () {
-
+    it('Invalid Packet Byte Length', function () {
+      assert.equal('Invalid Packet Byte Length', k.OBCIErrorInvalidByteLength);
+    });
+    it('Invalid Start Byte', function () {
+      assert.equal('Invalid Start Byte', k.OBCIErrorInvalidByteStart);
+    });
+    it('Invalid Stop Byte', function () {
+      assert.equal('Invalid Stop Byte', k.OBCIErrorInvalidByteStop);
+    });
+    it('Failure: Communications timeout - Device failed to poll Host', function () {
+      assert.equal('Failure: Communications timeout - Device failed to poll Host', k.OBCIErrorRadioSystemDown);
+    });
+    it("'this.sync.curSyncObj' must not be null", function () {
+      assert.equal("'this.sync.curSyncObj' must not be null", k.OBCIErrorTimeSyncIsNull);
+    });
+    it('Missed the time sync sent confirmation. Try sync again', function () {
+      assert.equal('Missed the time sync sent confirmation. Try sync again', k.OBCIErrorTimeSyncNoComma);
+    });
+    it('Undefined or Null Input', function () {
+      assert.equal('Undefined or Null Input', k.OBCIErrorUndefinedOrNullInput);
+    });
   });
 });

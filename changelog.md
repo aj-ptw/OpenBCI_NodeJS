@@ -1,3 +1,29 @@
+# 1.6.0
+
+### New Features
+* Add note about serialport node error (thanks @octopicorn)
+* Closes #142 - Graceful termination
+
+### Breaking changes
+* Connect rejects when radio system is down on firmware version 2 see #144
+* Module drops all attached event emitters on disconnect see #144
+
+### Bug Fixes
+* Fixes #144 - v2 firmware succeeds when no board attached
+
+### Dependency Package Updates
+* `performance-now`: from `^0.2.0` to `2.1.0`
+* `serialport` - from `4.0.1` to `4.0.7`
+
+### Development Dependency Package Updates
+* `bluebird`: from `3.4.6` to `3.5.0`
+* `chai-as-promised`: from `^5.2.0` to `^6.0.0`
+* `codecov`: from `^1.0.1` to `^2.1.0`
+* `semistandard`: from `^9.0.0` to `^10.0.0`
+* `sinon`: from `^1.17.2` to `^2.1.0`
+* `snazzy`: from `^5.0.0` to `^6.0.0`
+
+
 # 1.5.1
 
 ### New Features
@@ -7,7 +33,7 @@
 * Removed `impedanceCalculationForChannel()` and `impedanceCalculationForAllChannels` from `OpenBCISample.js`
 
 ### Bug Fixes
-* Fixes #28- Impedance not working properly.
+* Fixes #28 - Impedance not working properly.
 
 # 1.5.0
 
