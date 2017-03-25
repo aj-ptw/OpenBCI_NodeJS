@@ -56,6 +56,10 @@ function OpenBCIFactory () {
    *              `ganglion` - 4 Channel board
    *                  (NOTE: THIS IS IN-OP TIL RELEASE OF GANGLION BOARD 07/2016)
    *
+   *     - `commsDownDetection` {Boolean} - Allows the connect function to detect when a radio communication system is
+   *                  down, when sending a soft reset for example. Timeout used for firmware version 1 comparability.
+   *                  Will delay the connect function to ensure good communication. (Default `true`)
+   *
    *     - `hardSet` {Boolean} - Recommended if using `daisy` board! For some reason, the `daisy` is sometimes
    *                  not picked up by the module so you can set `hardSet` to true which will ensure the daisy
    *                  is picked up. (Default `false`)
@@ -245,7 +249,7 @@ function OpenBCIFactory () {
   OpenBCIBoard.prototype.connect = function (portName) {
     return new Promise((resolve, reject) => {
       if (this.isConnected()) return reject('already connected!');
-
+      let badCommsDetected = false;
       /* istanbul ignore else */
       if (this.options.simulate || portName === k.OBCISimulatorPortName) {
         this.options.simulate = true;
@@ -283,32 +287,58 @@ function OpenBCIFactory () {
       this.serial.on('data', data => {
         this._processBytes(data);
       });
+      let commsTimeout = null;
+      const commsDownFunc = () => {
+        reject(k.OBCIErrorRadioSystemDown);
+        badCommsDetected = true;
+        clearTimeout(commsTimeout);
+      };
+      const readyFunc = () => {
+        this.removeListener(k.OBCIEmitterCommsDown, commsDownFunc);
+        clearTimeout(commsTimeout);
+        resolve();
+      };
       this.serial.once('open', () => {
         if (this.options.verbose) console.log('Serial port open');
         new Promise(resolve => {
           // TODO: document why this 300 ms delay is needed
           setTimeout(resolve, this.options.simulate ? 50 : 300);
-        }).then(() => {
+        })
+        .then(() => {
           if (this.options.verbose) console.log('Sending stop command, in case the device was left streaming...');
           return this.write(k.OBCIStreamStop);
-        }).then(() => {
+        })
+        .then(() => {
           return new Promise(resolve => this.serial.flush(resolve));
-        }).then(() => {
-          // TODO: document why this 250 ms delay is needed
+        })
+        .then(() => {
+          // Long device poll times on v1 firmware need a delay
           return new Promise(resolve => setTimeout(resolve, 250));
-        }).then(() => {
+        })
+        .then(() => {
+          if (this.options.commsDownDetection) {
+            this.once(k.OBCIEmitterCommsDown, commsDownFunc);
+            this.once(k.OBCIEmitterReady, readyFunc);
+          } else {
+            resolve(); // If comms down detection is not used that just resolve
+          }
           if (this.options.verbose) console.log('Sending soft reset');
-          // TODO: this promise chain resolves early because
-          //  A. some legacy code (in tests) sets the ready handler after this resolves
-          // and
-          //  B. other legacy code (in tests) needs the simulator to reply with segmented packets, never fragmented
-          // which is C. not implemented yet except in a manner such that replies occur in the write handler,
-          // resulting in the EOT arriving before this resolves
-          // Fix one or more of the above 3 situations, then move resolve() to the next block.
-          resolve();
           return this.softReset();
-        }).then(() => {
-          if (this.options.verbose) console.log("Waiting for '$$$'");
+        })
+        .then(() => {
+          if (!badCommsDetected) {
+            if (this.options.verbose) console.log("Waiting for '$$$'");
+            if (this.options.commsDownDetection) {
+              commsTimeout = setTimeout(() => {
+                this.removeListener(k.OBCIEmitterCommsDown, commsDownFunc);
+                this.removeListener(k.OBCIEmitterReady, readyFunc);
+                reject('Comms down');
+              }, 500);
+            }
+          }
+        })
+        .catch((err) => {
+          reject(err);
         });
       });
       this.serial.once('close', () => {
@@ -1805,7 +1835,9 @@ function OpenBCIFactory () {
     if (this.options.commsDownDetection) {
       if (openBCISample.isCommsSystemDown(data)) {
         if (this.options.verbose) console.log(k.OBCIErrorRadioSystemDown);
-        this.emit(k.OBCIEmitterError, new Error(k.OBCIErrorRadioSystemDown));
+        this.emit(k.OBCIEmitterCommsDown, k.OBCIErrorRadioSystemDown);          this.buffer = openBCISample.stripToEOTBuffer(data);
+        this.buffer = openBCISample.stripToEOTBuffer(data);
+        return;
       }
     }
 

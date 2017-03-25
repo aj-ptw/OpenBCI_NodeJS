@@ -1444,6 +1444,9 @@ describe('OpenBCIConstants', function () {
     it('Event Emitter Close', function () {
       assert.equal('close', k.OBCIEmitterClose);
     });
+    it('Event Emitter Comms Down', function () {
+      assert.equal('commsDown', k.OBCIEmitterCommsDown);
+    });
     it('Event Emitter Dropped Packet', function () {
       assert.equal('droppedPacket', k.OBCIEmitterDroppedPacket);
     });

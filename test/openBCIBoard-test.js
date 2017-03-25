@@ -412,18 +412,17 @@ describe('openbci-sdk', function () {
         verbose: true,
         simulate: true
       });
-      ourBoard.connect(k.OBCISimulatorPortName).catch(done);
-      ourBoard.on('ready', function () {
-        expect(ourBoard.isSimulating()).to.equal(true);
-        var disconnectSpy = sinon.spy(ourBoard, 'disconnect');
-        ourBoard.options.simulate.should.equal(true);
-        ourBoard.simulatorDisable().then(() => {
-          disconnectSpy.should.have.been.calledOnce;
-          disconnectSpy.restore();
+      ourBoard.connect(k.OBCISimulatorPortName)
+        .then(() => {
+          expect(ourBoard.isSimulating()).to.equal(true);
+          ourBoard.options.simulate.should.equal(true);
+          return ourBoard.simulatorDisable();
+        })
+        .then(() => {
           ourBoard.options.simulate.should.equal(false);
           done();
-        }, done);
-      });
+        })
+        .catch(done);
     });
     it('should be able to propagate constructor options to simulator', function (done) {
       ourBoard = new openBCIBoard.OpenBCIBoard({
@@ -446,26 +445,26 @@ describe('openbci-sdk', function () {
 
       ourBoard.connect(k.OBCISimulatorPortName)
         .then(() => {
-          ourBoard.once('ready', () => {
-            var simOptions = ourBoard.serial.options;
-            expect(simOptions).to.be.an('object');
-            expect(simOptions.accel).to.be.false;
-            expect(simOptions.alpha).to.be.false;
-            expect(simOptions.boardFailure).to.be.false;
-            expect(simOptions.daisy).to.be.true;
-            expect(simOptions.daisyCanBeAttached).to.be.false;
-            expect(simOptions.drift).to.be.below(0);
-            expect(simOptions.firmwareVersion).to.be.equal(k.OBCIFirmwareV2);
-            expect(simOptions.fragmentation).to.be.equal(k.OBCISimulatorFragmentationOneByOne);
-            expect(simOptions.latencyTime).to.be.equal(314);
-            expect(simOptions.bufferSize).to.be.equal(2718);
-            expect(simOptions.lineNoise).to.be.equal(k.OBCISimulatorLineNoiseNone);
-            expect(simOptions.sampleRate).to.be.equal(16);
-            expect(simOptions.serialPortFailure).to.be.true;
-            expect(simOptions.verbose).to.be.true;
-            ourBoard.disconnect().then(done).catch(done);
-          });
-        }).catch(err => done(err));
+          var simOptions = ourBoard.serial.options;
+          expect(simOptions).to.be.an('object');
+          expect(simOptions.accel).to.be.false;
+          expect(simOptions.alpha).to.be.false;
+          expect(simOptions.boardFailure).to.be.false;
+          expect(simOptions.daisy).to.be.true;
+          expect(simOptions.daisyCanBeAttached).to.be.false;
+          expect(simOptions.drift).to.be.below(0);
+          expect(simOptions.firmwareVersion).to.be.equal(k.OBCIFirmwareV2);
+          expect(simOptions.fragmentation).to.be.equal(k.OBCISimulatorFragmentationOneByOne);
+          expect(simOptions.latencyTime).to.be.equal(314);
+          expect(simOptions.bufferSize).to.be.equal(2718);
+          expect(simOptions.lineNoise).to.be.equal(k.OBCISimulatorLineNoiseNone);
+          expect(simOptions.sampleRate).to.be.equal(16);
+          expect(simOptions.serialPortFailure).to.be.true;
+          expect(simOptions.verbose).to.be.true;
+          return ourBoard.disconnect();
+        })
+        .then(done)
+        .catch(err => done(err));
     });
     it('should reject when board failure with firmware version 2', function (done) {
       ourBoard = new openBCIBoard.OpenBCIBoard({
@@ -475,7 +474,9 @@ describe('openbci-sdk', function () {
       });
 
       ourBoard.connect(k.OBCISimulatorPortName)
-        .then(ourBoard.disconnect)
+        .then(() => {
+          return ourBoard.disconnect();
+        })
         .then(() => {
           done('should not have resolved because of board failure')
         })
@@ -483,18 +484,6 @@ describe('openbci-sdk', function () {
           expect(err).to.equal(k.OBCIErrorRadioSystemDown);
           done();
         });
-    });
-    it('should resolve for board failure on firmware version 1', function (done) {
-      ourBoard = new openBCIBoard.OpenBCIBoard({
-        simulate: true,
-        simulatorBoardFailure: true,
-        simulatorFirmwareVersion: k.OBCIFirmwareV1
-      });
-
-      ourBoard.connect(k.OBCISimulatorPortName)
-        .then(ourBoard.disconnect)
-        .then(done)
-        .catch(done);
     });
     it('should be able to set info for default board', function () {
       ourBoard.info.boardType = 'burrito';
@@ -1023,10 +1012,8 @@ describe('openbci-sdk', function () {
     });
     describe('#sdStart', function () {
       before(function (done) {
+        ourBoard.once('ready', done);
         ourBoard.connect(k.OBCISimulatorPortName)
-          .then(() => {
-            ourBoard.once('ready', done);
-          })
           .catch(err => done(err));
       });
       afterEach(function (done) {
