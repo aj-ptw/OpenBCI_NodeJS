@@ -25,7 +25,7 @@ aedes.on('client', function (client) {
 
 aedes.publish({
   cmd: 'publish',
-  qos: 2,
+  qos: 0,
   topic: 'openbci/wifi',
   payload: 'hello',
   retain: false
