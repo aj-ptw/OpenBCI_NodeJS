@@ -45,46 +45,46 @@ function OpenBCIFactory () {
 
   /**
    * @description The initialization method to call first, before any other method.
-   * @param options (optional) - Board optional configurations.
-   *     - `baudRate` {Number} - Baud Rate, defaults to 115200. Manipulating this is allowed if
+   * @param options {Object} (optional) - Board optional configurations.
+   * @param options.baudRate {Number} - Baud Rate, defaults to 115200. Manipulating this is allowed if
    *                      firmware on board has been previously configured.
    *
-   *     - `boardType` {String} - Specifies type of OpenBCI board.
+   * @param options.boardType {String} - Specifies type of OpenBCI board.
    *          3 Possible Boards:
    *              `default` - 8 Channel OpenBCI board (Default)
    *              `daisy` - 8 Channel OpenBCI board with Daisy Module. Total of 16 channels.
    *              `ganglion` - 4 Channel board
    *                  (NOTE: THIS IS IN-OP TIL RELEASE OF GANGLION BOARD 07/2016)
    *
-   *     - `commsDownDetection` {Boolean} - Allows the connect function to detect when a radio communication system is
+   * @param options.commsDownDetection {Boolean} - Allows the connect function to detect when a radio communication system is
    *                  down, when sending a soft reset for example. Timeout used for firmware version 1 comparability.
    *                  Will delay the connect function to ensure good communication. (Default `true`)
    *
-   *     - `hardSet` {Boolean} - Recommended if using `daisy` board! For some reason, the `daisy` is sometimes
+   * @param options.hardSet {Boolean} - Recommended if using `daisy` board! For some reason, the `daisy` is sometimes
    *                  not picked up by the module so you can set `hardSet` to true which will ensure the daisy
    *                  is picked up. (Default `false`)
    *
-   *     - `simulate` {Boolean} - Full functionality, just mock data. Must attach Daisy module by setting
+   * @param options.simulate {Boolean} - Full functionality, just mock data. Must attach Daisy module by setting
    *                  `simulatorDaisyModuleAttached` to `true` in order to get 16 channels. (Default `false`)
    *
-   *     - `simulatorBoardFailure` {Boolean} - Simulates board communications failure. This occurs when the RFduino on
+   * @param options.simulatorBoardFailure {Boolean} - Simulates board communications failure. This occurs when the RFduino on
    *                  the board is not polling the RFduino on the dongle. (Default `false`)
    *
-   *     - `simulatorDaisyModuleAttached` {Boolean} - Simulates a daisy module being attached to the OpenBCI board.
+   * @param options.simulatorDaisyModuleAttached {Boolean} - Simulates a daisy module being attached to the OpenBCI board.
    *                  This is useful if you want to test how your application reacts to a user requesting 16 channels
    *                  but there is no daisy module actually attached, or vice versa, where there is a daisy module
    *                  attached and the user only wants to use 8 channels. (Default `false`)
    *
-   *     - `simulatorDaisyModuleCanBeAttached` {Boolean} - Allows the simulation of the a hot swapped daisy board.
+   * @param options.simulatorDaisyModuleCanBeAttached {Boolean} - Allows the simulation of the a hot swapped daisy board.
    *                  For example: You coule simulate if the board has only detected 8 channels and the user requested
    *                  16 channels.  (Default `true`)
    *
-   *     - `simulatorFirmwareVersion` {String} - Allows simulator to be started with firmware version 2 features
+   * @param options.simulatorFirmwareVersion {String} - Allows simulator to be started with firmware version 2 features
    *          2 Possible Options:
    *              `v1` - Firmware Version 1 (Default)
    *              `v2` - Firmware Version 2
    *
-   *     - `simulatorFragmentation` {String} - Specifies how to break packets to simulate fragmentation, which
+   * @param options.simulatorFragmentation {String} - Specifies how to break packets to simulate fragmentation, which
    *                  occurs commonly in real devices.  It is recommended to test code with this enabled.
    *          4 Possible Options:
    *              `none` - do not fragment packets; output complete chunks immediately when produced (Default)
@@ -92,40 +92,40 @@ function OpenBCIFactory () {
    *              `fullBuffers` - allow buffers to fill up until the latency timer has expired
    *              `oneByOne` - output each byte separately
    *
-   *     - `simulatorLatencyTime` {Number} - The time in milliseconds to wait before sending partially full buffers,
+   * @param options.simulatorLatencyTime {Number} - The time in milliseconds to wait before sending partially full buffers,
    *                  if `simulatorFragmentation` is specified. (Default `16`)
    *
-   *     - `simulatorBufferSize` {Number} - The size of a full buffer of data, if `simulatorFragmentation` is
+   * @param options.simulatorBufferSize {Number} - The size of a full buffer of data, if `simulatorFragmentation` is
    *                  specified. (Default `4096`)
    *
-   *     - `simulatorHasAccelerometer` - {Boolean} - Sets simulator to send packets with accelerometer data. (Default `true`)
+   * @param options.simulatorHasAccelerometer - {Boolean} - Sets simulator to send packets with accelerometer data. (Default `true`)
    *
-   *     - `simulatorInjectAlpha` - {Boolean} - Inject a 10Hz alpha wave in Channels 1 and 2 (Default `true`)
+   * @param options.simulatorInjectAlpha - {Boolean} - Inject a 10Hz alpha wave in Channels 1 and 2 (Default `true`)
    *
-   *     - `simulatorInjectLineNoise` {String} - Injects line noise on channels.
+   * @param options.simulatorInjectLineNoise {String} - Injects line noise on channels.
    *          3 Possible Options:
    *              `60Hz` - 60Hz line noise (Default) [America]
    *              `50Hz` - 50Hz line noise [Europe]
    *              `none` - Do not inject line noise.
    *
-   *     - `simulatorSampleRate` {Number} - The sample rate to use for the simulator. Simulator will set to 125 if
+   * @param options.simulatorSampleRate {Number} - The sample rate to use for the simulator. Simulator will set to 125 if
    *                  `simulatorDaisyModuleAttached` is set `true`. However, setting this option overrides that
    *                  setting and this sample rate will be used. (Default is `250`)
    *
-   *     - `simulatorSerialPortFailure` {Boolean} - Simulates not being able to open a serial connection. Most likely
+   * @param options.simulatorSerialPortFailure {Boolean} - Simulates not being able to open a serial connection. Most likely
    *                  due to a OpenBCI dongle not being plugged in.
    *
-   *     - `sntpTimeSync` - {Boolean} Syncs the module up with an SNTP time server and uses that as single source
+   * @param options.sntpTimeSync - {Boolean} Syncs the module up with an SNTP time server and uses that as single source
    *                  of truth instead of local computer time. If you are running experiements on your local
    *                  computer, keep this `false`. (Default `false`)
    *
-   *     - `sntpTimeSyncHost` - {String} The ntp server to use, can be either sntp or ntp. (Defaults `pool.ntp.org`).
+   * @param options.sntpTimeSyncHost - {String} The ntp server to use, can be either sntp or ntp. (Defaults `pool.ntp.org`).
    *
-   *     - `sntpTimeSyncPort` - {Number} The port to access the ntp server. (Defaults `123`)
+   * @param options.sntpTimeSyncPort - {Number} The port to access the ntp server. (Defaults `123`)
    *
-   *     - `verbose` {Boolean} - Print out useful debugging events. (Default `false`)
+   * @param options.verbose {Boolean} - Print out useful debugging events. (Default `false`)
    *
-   *     - `debug` {Boolean} - Print out a raw dump of bytes sent and received. (Default `false`)
+   * @param options.debug {Boolean} - Print out a raw dump of bytes sent and received. (Default `false`)
    *
    * @constructor
    * @author AJ Keller (@pushtheworldllc)
@@ -395,7 +395,7 @@ function OpenBCIFactory () {
         if (!this.isConnected()) {
           return Promise.reject('no board connected');
         } else {
-          return new Promise((resolve, reject) => {
+          return new Promise((resolve) => {
             // serial emitting 'close' will call _disconnected
             this.serial.close(() => {
               resolve();

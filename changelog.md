@@ -6,6 +6,7 @@
 * Adds `commsDownDetection` option, enabled by default, don't need to use 'ready' function any more.
 
 ### Breaking changes
+* !! Must subscribe to 'ready' before call to `.connect()` !! i.e.
 * Connect rejects when radio system is down on firmware version 2 see #144
 * Module drops all attached event emitters on disconnect see #142
 * Connect resolved too early, resulted in resolves of systems that could not be user.
