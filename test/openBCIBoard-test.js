@@ -53,7 +53,7 @@ describe('openbci-sdk', function () {
       done();
     }
   });
-  xdescribe('#constructor', function () {
+  describe('#constructor', function () {
     afterEach(() => {
       ourBoard = null;
       return bluebirdChecks.noPendingPromises();
@@ -513,7 +513,7 @@ describe('openbci-sdk', function () {
       expect(ourBoard.getInfo().sampleRate).to.be.equal(k.OBCISampleRate250);
     });
   });
-  xdescribe('#debug', function () {
+  describe('#debug', function () {
     before(function (done) {
       ourBoard = new openBCIBoard.OpenBCIBoard({
         debug: true,

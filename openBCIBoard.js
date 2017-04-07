@@ -289,19 +289,23 @@ function OpenBCIFactory () {
       });
       let commsTimeout = null;
       const commsDownFunc = () => {
-        reject(k.OBCIErrorRadioSystemDown);
         badCommsDetected = true;
         clearTimeout(commsTimeout);
+        reject(k.OBCIErrorRadioSystemDown);
       };
+      let boardReady = false;
       const readyFunc = () => {
         this.removeListener(k.OBCIEmitterCommsDown, commsDownFunc);
+        boardReady = true;
         clearTimeout(commsTimeout);
         resolve();
       };
       this.serial.once('open', () => {
         if (this.options.verbose) console.log('Serial port open');
         new Promise(resolve => {
-          // TODO: document why this 300 ms delay is needed
+          // Due to inconsistencies in input/output FTDI buffer sizes and flush rates,
+          // a decent timeout must be observed for v1 systems because we cannot send two chars
+          // close to each other with the burger protocol
           setTimeout(resolve, this.options.simulate ? 50 : 300);
         })
         .then(() => {
@@ -312,7 +316,7 @@ function OpenBCIFactory () {
           return new Promise(resolve => this.serial.flush(resolve));
         })
         .then(() => {
-          // Long device poll times on v1 firmware need a delay
+          // Long device poll times on v1 firmware need a delay, poll time normally less than 100ms
           return new Promise(resolve => setTimeout(resolve, 250));
         })
         .then(() => {
@@ -322,13 +326,15 @@ function OpenBCIFactory () {
           } else {
             resolve(); // If comms down detection is not used that just resolve
           }
-          if (this.options.verbose) console.log('Sending soft reset');
-          return this.softReset();
+          if (!badCommsDetected) {
+            if (this.options.verbose) console.log('Sending soft reset');
+            return this.softReset();
+          }
         })
         .then(() => {
           if (!badCommsDetected) {
             if (this.options.verbose) console.log("Waiting for '$$$'");
-            if (this.options.commsDownDetection) {
+            if (this.options.commsDownDetection && !boardReady) {
               commsTimeout = setTimeout(() => {
                 this.removeListener(k.OBCIEmitterCommsDown, commsDownFunc);
                 this.removeListener(k.OBCIEmitterReady, readyFunc);
@@ -1835,7 +1841,8 @@ function OpenBCIFactory () {
     if (this.options.commsDownDetection) {
       if (openBCISample.isCommsSystemDown(data)) {
         if (this.options.verbose) console.log(k.OBCIErrorRadioSystemDown);
-        this.emit(k.OBCIEmitterCommsDown, k.OBCIErrorRadioSystemDown);          this.buffer = openBCISample.stripToEOTBuffer(data);
+        this._disconnected(k.OBCIErrorRadioSystemDown);
+        this.emit(k.OBCIEmitterCommsDown, k.OBCIErrorRadioSystemDown);
         this.buffer = openBCISample.stripToEOTBuffer(data);
         return;
       }

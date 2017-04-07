@@ -199,7 +199,13 @@ function OpenBCISimulatorFactory () {
         if (data[0] === k.OBCIRadioKey) {
           this._processPrivateRadioMessage(data);
         } else {
-          this._output(new Buffer(`${k.OBCIErrorRadioSystemDown}$$$`));
+          // v2.0.0 on OpenBCI Radios introduced comms down detection where if Device (on board) RFDuino fails to poll
+          //  Host (on dongle) RFDuino within 270ms buffer is cleared and failure message is sent back
+          //  See: OPENBCI_TIMEOUT_COMMS_MS - https://github.com/OpenBCI/OpenBCI_Radios/blob/master/OpenBCI_Radios_Definitions.h#L24
+          //  And: .commsFailureTimeout() https://github.com/OpenBCI/OpenBCI_Radios/blob/master/OpenBCI_Radios.cpp#L394
+          setTimeout(() => {
+            this._output(new Buffer(`${k.OBCIErrorRadioSystemDown}$$$`));
+          }, 270);
         }
       }
     } else {
