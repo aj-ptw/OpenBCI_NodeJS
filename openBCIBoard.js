@@ -218,11 +218,12 @@ function OpenBCIFactory () {
     if (this.options.sntpTimeSync) {
       // establishing ntp connection
       this.sntpStart()
-        .catch(ignored => {
+        .catch(() => {
           // try again once after a delay
-          return new Promise((resolve, reject) => {
-            setTimeout(resolve, 500);
-          }).then(() => this.sntpStart());
+          return new Promise(resolve => setTimeout(resolve, 500));
+        })
+        .then(() => {
+          return this.sntpStart();
         })
         .then(() => {
           if (this.options.verbose) console.log('SNTP: connected');
@@ -338,7 +339,7 @@ function OpenBCIFactory () {
               commsTimeout = setTimeout(() => {
                 this.removeListener(k.OBCIEmitterCommsDown, commsDownFunc);
                 this.removeListener(k.OBCIEmitterReady, readyFunc);
-                reject('Comms down');
+                reject(k.OBCIErrorRadioSystemDown);
               }, 500);
             }
           }
@@ -2385,7 +2386,7 @@ function OpenBCIFactory () {
   * @returns {Promise} - A promise if the module was able to sync with ntp server.
   * @author AJ Keller (@pushtheworldllc)
   */
-  OpenBCIBoard.prototype.sntpStart = function (options) {
+  OpenBCIBoard.prototype.sntpStart = function () {
     this.options.sntpTimeSync = true;
 
     // Sntp.start doesn't actually report errors (2016-10-29)
@@ -2400,7 +2401,7 @@ function OpenBCIFactory () {
         }, () => {
           this.sync.sntpActive = true;
           this.emit('sntpTimeLock');
-          resolve();
+          return resolve();
         });
       });
     });
