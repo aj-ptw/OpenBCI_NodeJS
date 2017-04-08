@@ -8,9 +8,10 @@ client.on('notify', function () {
   console.log('Got a notification.')
 });
 
+let hitter = null;
 client.on('response', function inResponse(headers, code, rinfo) {
   console.log('Got a response to an m-search:\n%d\n%s\n%s', code, JSON.stringify(headers, null, '  '), JSON.stringify(rinfo, null, '  '))
-  setInterval(() => {
+  hitter = setInterval(() => {
     hitThatShit(rinfo.address);
   }, 100)
 });
@@ -20,6 +21,7 @@ client.search('urn:schemas-upnp-org:device:Basic:1');
 
 // And after 10 seconds, you want to stop
 setTimeout(function () {
+  if (hitter) clearInterval(hitter);
   console.log('stoping');
   client.stop()
 }, 60000);
