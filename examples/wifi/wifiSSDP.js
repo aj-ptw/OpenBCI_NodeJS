@@ -1,16 +1,54 @@
 const ssdp = require('node-ssdp').Client;
-var http = require('http');
-var net = require('net');
+const http = require('http');
+const net = require('net');
+const _ = require('lodash');
 
 
 ////////////////
 // TCP Server //
 ////////////////
-var server = net.createServer(function(socket) {
+function debugBytes(prefix, data) {
+  if (_.isUndefined(data)) return;
+  if (typeof data === 'string') data = new Buffer(data);
+
+  console.log('Debug bytes:');
+
+  for (var j = 0; j < data.length;) {
+    var hexPart = '';
+    var ascPart = '';
+    for (var end = Math.min(data.length, j + 16); j < end; ++j) {
+      var byt = data[j];
+
+      var hex = ('0' + byt.toString(16)).slice(-2);
+      hexPart += (((j & 0xf) === 0x8) ? '  ' : ' '); // puts an extra space 8 bytes in
+      hexPart += hex;
+
+      var asc = (byt >= 0x20 && byt < 0x7f) ? String.fromCharCode(byt) : '.';
+      ascPart += asc;
+    }
+
+    // pad to fixed width for alignment
+    hexPart = (hexPart + '                                                   ').substring(0, 3 * 17);
+
+    console.log(prefix + ' ' + hexPart + '|' + ascPart + '|');
+  }
+}
+const server = net.createServer(function(socket) {
   socket.on('data', function(data){
     // console.log(data);
-    var textChunk = data.toString('utf8');
-    console.log(textChunk);
+    // const textChunk = data.toString('utf8');
+
+    debugBytes(data);
+    // try {
+    //   const obj = JSON.parse(textChunk);
+    //   const numSamples = obj.data.length;
+    //   for (let i = 0; i < numSamples; i++) {
+    //     const sample = obj.data[i];
+    //     console.log(sample[1]);
+    //   }
+    // } catch (e) {
+    //   console.log(e);
+    // }
   });
   socket.on('error', function (err) {
     console.log(err);

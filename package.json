@@ -19,6 +19,7 @@
     "gaussian": "^1.0.0",
     "libnmap": "^0.3.9",
     "mathjs": "^3.3.0",
+    "node-ssdp": "^3.2.1",
     "performance-now": "^0.2.0",
     "polo": "^0.8.1",
     "portscanner": "^2.1.1",
