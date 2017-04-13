@@ -39,8 +39,15 @@ const server = net.createServer(function(socket) {
   let lastZerothPacket = Date.now();
   let diffs = [];
   let lastAvgPrint = Date.now();
+  let lastDataRatePrint = Date.now();
+  let dataRateCounter = 0;
   socket.on('data', function(data){
     let index = 0;
+    if (Date.now() > (1000 + lastDataRatePrint)) {
+      console.log(`data rate: ${Math.floor(dataRateCounter)}Hz`);
+      lastDataRatePrint = Date.now();
+      dataRateCounter = 0;
+    }
     while (index < data.byteLength) {
       const currentSampleNumber = data[index + 1];
       if (currentSampleNumber === 0) {
@@ -51,6 +58,8 @@ const server = net.createServer(function(socket) {
         diffs.push(Date.now() - lastZerothPacket);
         lastZerothPacket = Date.now();
       }
+      dataRateCounter++;
+
       // console.log((Date.now() - lastAvgPrint));
       if ((Date.now() - lastAvgPrint) > 10000) {
         let sum = 0;
@@ -61,7 +70,7 @@ const server = net.createServer(function(socket) {
         diffs = [];
         lastAvgPrint = Date.now();
       }
-      console.log(data[index + 1], Date.now());
+      // console.log(data[index + 1], Date.now());
       index += 32;
       let diff = data[index + 1] - lastSampleNumber;
       if (diff < 0) {
@@ -111,11 +120,11 @@ client.on('response', function inResponse(headers, code, rinfo) {
   console.log('Got a response to an m-search:\n%d\n%s\n%s', code, JSON.stringify(headers, null, '  '), JSON.stringify(rinfo, null, '  '));
   // hitThatShit(rinfo.address, '/websocket');
   post(rinfo.address, '/websocket', {"port": server.address().port});
-  http.get({
-    host: rinfo.address,
-    port: 80,
-    path: '/test/start'
-  }, processRes);
+  // http.get({
+  //   host: rinfo.address,
+  //   port: 80,
+  //   path: '/test/start'
+  // }, processRes);
   // hitter = setInterval(() => {
   //   hitThatShit(rinfo.address);
   // }, 200);
