@@ -20,14 +20,18 @@ var ourBoard = new OpenBCIBoard({
   wifi: wifi
 });
 
+ourBoard.on('droppedPacket', console.log);
+ourBoard.on('rawDataPacket', console.log);
+
 ourBoard.on('sample',(sample) => {
+  // console.log(sample.sampleNumber);
   /** Work with sample */
-  for (let i = 0; i < ourBoard.numberOfChannels(); i++) {
-    console.log("Channel " + (i + 1) + ": " + sample.channelData[i].toFixed(8) + " Volts.");
-  }
+  // for (let i = 0; i < ourBoard.numberOfChannels(); i++) {
+  //   console.log("Channel " + (i + 1) + ": " + sample.channelData[i].toFixed(8) + " Volts.");
+  // }
 });
 
-ourBoard.once('wifiShields', (obj) => {
+ourBoard.once('wifiShield', (obj) => {
   const ip = obj.rinfo.address;
   ourBoard.wifiFindShieldsStop();
   ourBoard.connect(ip)
@@ -45,12 +49,15 @@ function exitHandler (options, err) {
   if (options.cleanup) {
     if (verbose) console.log('clean');
     /** Do additional clean up here */
+    ourBoard.removeAllListeners('rawDataPacket');
+    ourBoard.removeAllListeners('droppedPacket');
+    ourBoard.removeAllListeners('sample');
     ourBoard.wifiDestroy();
   }
   if (err) console.log(err.stack);
   if (options.exit) {
     if (verbose) console.log('exit');
-    ourBoard.disconnect().catch(console.log);
+    // ourBoard.disconnect().catch(console.log);
   }
 }
 
