@@ -38,18 +38,23 @@ const server = net.createServer(function(socket) {
   let lastSampleNumber = 0;
   let lastZerothPacket = Date.now();
   let diffs = [];
+  let packetLens = [];
   let lastAvgPrint = Date.now();
   let lastDataRatePrint = Date.now();
   let dataRateCounter = 0;
   socket.on('data', function(data){
+    // console.log(data.byteLength);
     let index = 0;
+    packetLens.push(data.byteLength);
     if (Date.now() > (1000 + lastDataRatePrint)) {
-      console.log(`data rate: ${Math.floor(dataRateCounter)}Hz`);
+      console.log(`data rate: ${Math.floor(dataRateCounter)}Hz --- avg samples per packet is ${(_.mean(packetLens)/32).toFixed(1)}`);
       lastDataRatePrint = Date.now();
       dataRateCounter = 0;
+      packetLens = [];
     }
     while (index < data.byteLength) {
       const currentSampleNumber = data[index + 1];
+      // console.log(currentSampleNumber);
       if (currentSampleNumber === 0) {
         // console.log(`time dif ${Date.now() - lastZerothPacket}`);
         if ((Date.now() - lastZerothPacket) < 5) {
@@ -71,15 +76,15 @@ const server = net.createServer(function(socket) {
         lastAvgPrint = Date.now();
       }
       // console.log(data[index + 1], Date.now());
-      index += 32;
-      let diff = data[index + 1] - lastSampleNumber;
+      let diff = currentSampleNumber - lastSampleNumber;
       if (diff < 0) {
         diff = 255 + diff;
       }
       if (diff > 1 && !firstPacket) {
         console.log(`dropped ${diff} packet${(diff > 1) ? "s": ""}... current is ${data[1]}`);
       }
-      lastSampleNumber = data[index + 1];
+      lastSampleNumber = currentSampleNumber;
+      index += 32;
       if (firstPacket) firstPacket = false;
     }
 
@@ -107,13 +112,7 @@ console.log("Server listening on port 5000");
 //////////
 // SSDP //
 //////////
-let client = new ssdp({
-//    unicastHost: '192.168.11.63'
-});
-
-client.on('notify', function () {
-  console.log('Got a notification.')
-});
+let client = new ssdp({});
 
 let hitter = null;
 client.on('response', function inResponse(headers, code, rinfo) {

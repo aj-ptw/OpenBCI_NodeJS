@@ -9,6 +9,9 @@ var openBCISimulator = require('./openBCISimulator');
 var Sntp = require('sntp');
 var bufferEqual = require('buffer-equal');
 var math = require('mathjs');
+const ssdp = require('node-ssdp').Client;
+const http = require('http');
+const net = require('net');
 
 /**
 * @description SDK for OpenBCI Board {@link www.openbci.com}
@@ -39,6 +42,7 @@ function OpenBCIFactory () {
     sntpTimeSyncHost: 'pool.ntp.org',
     sntpTimeSyncPort: 123,
     verbose: false,
+    wifi: false,
     debug: false
   };
 
@@ -119,6 +123,8 @@ function OpenBCIFactory () {
    *     - `sntpTimeSyncPort` - {Number} The port to access the ntp server. (Defaults `123`)
    *
    *     - `verbose` {Boolean} - Print out useful debugging events. (Default `false`)
+   *
+   *     - `wifi` {Boolean} - Used to connect to board through wifi shield instead of through dongle.
    *
    *     - `debug` {Boolean} - Print out a raw dump of bytes sent and received. (Default `false`)
    *
@@ -243,6 +249,43 @@ function OpenBCIFactory () {
   // This allows us to use the emitter class freely outside of the module
   util.inherits(OpenBCIBoard, stream.Stream);
 
+  OpenBCIBoard.prototype._connectSimulator = function(portName, cb) {
+    this.options.simulate = true;
+    // If we are simulating, set portName to fake name
+    this.portName = k.OBCISimulatorPortName;
+    if (this.options.verbose) console.log('using faux board ' + this.portName);
+    this.serial = new openBCISimulator.OpenBCISimulator(this.portName, {
+      accel: this.options.simulatorHasAccelerometer,
+      alpha: this.options.simulatorInjectAlpha,
+      boardFailure: this.options.simulatorBoardFailure,
+      daisy: this.options.simulatorDaisyModuleAttached,
+      daisyCanBeAttached: this.options.simulatorDaisyModuleCanBeAttached,
+      drift: this.options.simulatorInternalClockDrift,
+      firmwareVersion: this.options.simulatorFirmwareVersion,
+      fragmentation: this.options.simulatorFragmentation,
+      latencyTime: this.options.simulatorLatencyTime,
+      bufferSize: this.options.simulatorBufferSize,
+      lineNoise: this.options.simulatorInjectLineNoise,
+      sampleRate: this.options.simulatorSampleRate,
+      serialPortFailure: this.options.simulatorSerialPortFailure,
+      verbose: this.options.verbose
+    });
+    if (cb) cb(null);
+  };
+
+  OpenBCIBoard.prototype._connectUSBDongle = function(portName, cb) {
+    this.portName = portName;
+    if (this.options.verbose) console.log('using real board ' + portName);
+    this.serial = new SerialPort(portName, {
+      baudRate: this.options.baudRate
+    }, cb);
+  };
+
+  OpenBCIBoard.prototype._connectWifi = function (ip, cb) {
+    if (this.options.verbose) console.log('using wifi');
+    this.wifiConnectSocket(ip, cb);
+  };
+
   /**
   * @description The essential precursor method to be called initially to establish a
   *              serial connection to the OpenBCI board.
@@ -254,81 +297,67 @@ function OpenBCIFactory () {
     return new Promise((resolve, reject) => {
       if (this.isConnected()) return reject('already connected!');
 
-      /* istanbul ignore else */
-      if (this.options.simulate || portName === k.OBCISimulatorPortName) {
-        this.options.simulate = true;
-        // If we are simulating, set portName to fake name
-        this.portName = k.OBCISimulatorPortName;
-        if (this.options.verbose) console.log('using faux board ' + portName);
-        this.serial = new openBCISimulator.OpenBCISimulator(this.portName, {
-          accel: this.options.simulatorHasAccelerometer,
-          alpha: this.options.simulatorInjectAlpha,
-          boardFailure: this.options.simulatorBoardFailure,
-          daisy: this.options.simulatorDaisyModuleAttached,
-          daisyCanBeAttached: this.options.simulatorDaisyModuleCanBeAttached,
-          drift: this.options.simulatorInternalClockDrift,
-          firmwareVersion: this.options.simulatorFirmwareVersion,
-          fragmentation: this.options.simulatorFragmentation,
-          latencyTime: this.options.simulatorLatencyTime,
-          bufferSize: this.options.simulatorBufferSize,
-          lineNoise: this.options.simulatorInjectLineNoise,
-          sampleRate: this.options.simulatorSampleRate,
-          serialPortFailure: this.options.simulatorSerialPortFailure,
-          verbose: this.options.verbose
+      if (this.options.wifi) {
+        this._connectWifi(portName, (err) => {
+          if (err) reject(err);
+          else resolve();
         });
       } else {
-        this.portName = portName;
-        if (this.options.verbose) console.log('using real board ' + portName);
-        this.serial = new SerialPort(portName, {
-          baudRate: this.options.baudRate
-        }, (err) => {
+        let connectFun = null;
+        if (this.options.simulate || portName === k.OBCISimulatorPortName) {
+          connectFun = this._connectSimulator;
+        } else {
+          connectFun = this._connectUSBDongle(portName);
+        }
+        connectFun(portName, (err) => {
           if (err) reject(err);
-        });
+          else {
+            if (this.options.verbose) console.log('Serial port connected');
+
+            this.serial.on('data', data => {
+              this._processBytes(data);
+            });
+            this.serial.once('open', () => {
+              if (this.options.verbose) console.log('Serial port open');
+              new Promise(resolve => {
+                // TODO: document why this 300 ms delay is needed
+                setTimeout(resolve, this.options.simulate ? 50 : 300);
+              }).then(() => {
+                if (this.options.verbose) console.log('Sending stop command, in case the device was left streaming...');
+                return this.write(k.OBCIStreamStop);
+              }).then(() => {
+                return new Promise(resolve => this.serial.flush(resolve));
+              }).then(() => {
+                // TODO: document why this 250 ms delay is needed
+                return new Promise(resolve => setTimeout(resolve, 250));
+              }).then(() => {
+                if (this.options.verbose) console.log('Sending soft reset');
+                // TODO: this promise chain resolves early because
+                //  A. some legacy code (in tests) sets the ready handler after this resolves
+                // and
+                //  B. other legacy code (in tests) needs the simulator to reply with segmented packets, never fragmented
+                // which is C. not implemented yet except in a manner such that replies occur in the write handler,
+                // resulting in the EOT arriving before this resolves
+                // Fix one or more of the above 3 situations, then move resolve() to the next block.
+                resolve();
+                return this.softReset();
+              }).then(() => {
+                if (this.options.verbose) console.log("Waiting for '$$$'");
+              });
+            });
+            this.serial.once('close', () => {
+              if (this.options.verbose) console.log('Serial Port Closed');
+              // 'close' is emitted in _disconnected()
+              this._disconnected('port closed');
+            });
+            this.serial.once('error', (err) => {
+              if (this.options.verbose) console.log('Serial Port Error');
+              this.emit('error', err);
+              this._disconnected(err);
+            });
+          }
+        })
       }
-
-      if (this.options.verbose) console.log('Serial port connected');
-
-      this.serial.on('data', data => {
-        this._processBytes(data);
-      });
-      this.serial.once('open', () => {
-        if (this.options.verbose) console.log('Serial port open');
-        new Promise(resolve => {
-          // TODO: document why this 300 ms delay is needed
-          setTimeout(resolve, this.options.simulate ? 50 : 300);
-        }).then(() => {
-          if (this.options.verbose) console.log('Sending stop command, in case the device was left streaming...');
-          return this.write(k.OBCIStreamStop);
-        }).then(() => {
-          return new Promise(resolve => this.serial.flush(resolve));
-        }).then(() => {
-          // TODO: document why this 250 ms delay is needed
-          return new Promise(resolve => setTimeout(resolve, 250));
-        }).then(() => {
-          if (this.options.verbose) console.log('Sending soft reset');
-          // TODO: this promise chain resolves early because
-          //  A. some legacy code (in tests) sets the ready handler after this resolves
-          // and
-          //  B. other legacy code (in tests) needs the simulator to reply with segmented packets, never fragmented
-          // which is C. not implemented yet except in a manner such that replies occur in the write handler,
-          // resulting in the EOT arriving before this resolves
-          // Fix one or more of the above 3 situations, then move resolve() to the next block.
-          resolve();
-          return this.softReset();
-        }).then(() => {
-          if (this.options.verbose) console.log("Waiting for '$$$'");
-        });
-      });
-      this.serial.once('close', () => {
-        if (this.options.verbose) console.log('Serial Port Closed');
-        // 'close' is emitted in _disconnected()
-        this._disconnected('port closed');
-      });
-      this.serial.once('error', (err) => {
-        if (this.options.verbose) console.log('Serial Port Error');
-        this.emit('error', err);
-        this._disconnected(err);
-      });
     });
   };
 
@@ -2472,6 +2501,114 @@ function OpenBCIFactory () {
   */
   OpenBCIBoard.prototype.channelIsOnFromChannelSettingsObject = function (channelSettingsObject) {
     return channelSettingsObject.POWER_DOWN.toString().localeCompare('1') === 1;
+  };
+
+  OpenBCIBoard.prototype.wifiConnectSocket = function (ip, cb) {
+    this.wifiPost(ip, '/websocket', {
+      port: this.wifiServer.address().port
+    }, cb);
+  };
+
+  OpenBCIBoard.prototype.wifiDestroy = function () {
+    this.wifiServer = null;
+  };
+
+  OpenBCIBoard.prototype.wifiFindShieldsStart = function (timeout, attempts) {
+    this.wifiClient = new ssdp({});
+    let attemptCounter = 0;
+    let _attempts = attempts || 2;
+    let _timeout = timeout || 5 * 1000;
+    let timeoutFunc = () => {
+      if (attemptCounter < _attempts) {
+        this.wifiClient.stop();
+        this.wifiClient.search('urn:schemas-upnp-org:device:Basic:1');
+        attemptCounter++;
+        if (this.options.verbose) console.log(`SSDP: still trying to find a board - attempt ${attemptCounter} of ${_attempts}`);
+        this.ssdpTimeout = setTimeout(timeoutFunc, _timeout);
+      } else {
+        this.wifiClient.stop();
+        clearTimeout(this.ssdpTimeout);
+        if (this.options.verbose) console.log('SSDP: stopping because out of attemps');
+      }
+    };
+    this.wifiClient.on('response', (headers, code, rinfo) => {
+      if (this.options.verbose) console.log('SSDP:Got a response to an m-search:\n%d\n%s\n%s', code, JSON.stringify(headers, null, '  '), JSON.stringify(rinfo, null, '  '));
+      this.emit('wifiShield', { headers, code, rinfo });
+    });
+    // Search for just the wifi shield
+    this.wifiClient.search('urn:schemas-upnp-org:device:Basic:1');
+    this.ssdpTimeout = setTimeout(timeoutFunc, _timeout);
+  };
+
+  OpenBCIBoard.prototype.wifiFindShieldsStop = function () {
+    if (this.wifiClient) this.wifiClient.stop();
+    if (this.ssdpTimeout) clearTimeout(this.ssdpTimeout);
+  };
+
+  OpenBCIBoard.prototype.wifiInitServer = function () {
+    this.wifiServer = net.createServer((socket) => {
+      socket.on('data', (data) => {
+        this._processBytes(data);
+      });
+      socket.on('error', (err) => {
+        if (this.options.verbose) console.log('SSDP:',err);
+      });
+    }).listen();
+  };
+
+  OpenBCIBoard.prototype.wifiProcessResponse = function (res, cb) {
+    if (this.options.verbose) {
+      console.log(`STATUS: ${res.statusCode}`);
+      console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
+    }
+    res.setEncoding('utf8');
+    let msg = '';
+    res.on('data', (chunk) => {
+      if (this.options.verbose) console.log(`BODY: ${chunk}`);
+      msg += chunk.toString();
+    });
+    res.once('end', () => {
+      if (this.options.verbose) console.log('No more data in response.');
+      this.emit('res', msg);
+      if (res.statusCode !== 200) {
+        if (cb) cb(msg);
+      } else {
+        if (cb) cb();
+      }
+    });
+  };
+
+  OpenBCIBoard.prototype.wifiPost = function (host, path, payload, cb) {
+    const output = JSON.stringify(payload);
+    const options = {
+      host: host,
+      port: 80,
+      path: path,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': output.length
+      }
+    };
+
+    const req = http.request(options, (res) => {
+      this.wifiProcessResponse(res, (err) => {
+        if (err) {
+          if (cb) cb(err);
+        } else {
+          if (cb) cb();
+        }
+      });
+    });
+
+    req.on('error', (e) => {
+      if (this.options.verbose) console.log(`problem with request: ${e.message}`);
+      if (cb) cb(e);
+    });
+
+    // write data to request body
+    req.write(output);
+    req.end();
   };
 
   // TODO: checkConnection (py: check_connection)
