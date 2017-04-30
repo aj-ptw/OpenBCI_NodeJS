@@ -283,6 +283,7 @@ function OpenBCIFactory () {
 
   OpenBCIBoard.prototype._connectWifi = function (ip, cb) {
     if (this.options.verbose) console.log('using wifi');
+    this.wifiInitServer();
     this.wifiConnectSocket(ip, cb);
   };
 
@@ -1927,6 +1928,7 @@ function OpenBCIFactory () {
         // Now that we know the first is a head byte, let's see if the last one is a
         //  tail byte 0xCx where x is the set of numbers from 0-F (hex)
         if (openBCISample.isStopByte(dataBuffer[parsePosition + k.OBCIPacketSize - 1])) {
+          // console.log(dataBuffer[parsePosition+1]);
           /** We just qualified a raw packet */
           // This could be a time set packet!
           this.timeOfPacketArrival = this.time();
@@ -2003,7 +2005,7 @@ function OpenBCIFactory () {
     if (!rawDataPacketBuffer) return;
     if (rawDataPacketBuffer.byteLength !== k.OBCIPacketSize) return;
     var missedPacketArray = openBCISample.droppedPacketCheck(this.previousSampleNumber, rawDataPacketBuffer[k.OBCIPacketPositionSampleNumber]);
-    if (missedPacketArray) {
+    if (missedPacketArray && this.previousSampleNumber !== -1) {
       this.emit(k.OBCIEmitterDroppedPacket, missedPacketArray);
     }
     this.previousSampleNumber = rawDataPacketBuffer[k.OBCIPacketPositionSampleNumber];
@@ -2504,6 +2506,7 @@ function OpenBCIFactory () {
   };
 
   OpenBCIBoard.prototype.wifiConnectSocket = function (ip, cb) {
+    this.curParsingMode = k.OBCIParsingNormal;
     this.wifiPost(ip, '/websocket', {
       port: this.wifiGetLocalPort()
     }, cb);
