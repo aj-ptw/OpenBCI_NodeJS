@@ -32,6 +32,7 @@ ourBoard.once('wifiShields', (obj) => {
   ourBoard.wifiFindShieldsStop();
   ourBoard.connect(ip)
     .then(() => {
+      ourBoard.wifiPost(ip, '/command', {'command': 'b'});
       console.log('connected');
     })
     .catch((err) => {
