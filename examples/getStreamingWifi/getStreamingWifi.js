@@ -12,6 +12,7 @@
 var debug = false; // Pretty print any bytes in and out... it's amazing...
 var verbose = true; // Adds verbosity to functions
 var wifi = true;
+var ip = null;
 
 var OpenBCIBoard = require('../../openBCIBoard').OpenBCIBoard;
 var ourBoard = new OpenBCIBoard({
@@ -21,7 +22,7 @@ var ourBoard = new OpenBCIBoard({
 });
 
 ourBoard.on('droppedPacket', console.log);
-ourBoard.on('rawDataPacket', console.log);
+// ourBoard.on('rawDataPacket', console.log);
 
 ourBoard.on('sample',(sample) => {
   // console.log(sample.sampleNumber);
@@ -32,11 +33,12 @@ ourBoard.on('sample',(sample) => {
 });
 
 ourBoard.once('wifiShield', (obj) => {
-  const ip = obj.rinfo.address;
+  ip = obj.rinfo.address;
   ourBoard.wifiFindShieldsStop();
   ourBoard.connect(ip)
     .then(() => {
       ourBoard.wifiPost(ip, '/command', {'command': 'b'});
+      // ourBoard.wifiPost(ip, '/command', {'command': '>'});
       console.log('connected');
     })
     .catch((err) => {
@@ -50,6 +52,7 @@ function exitHandler (options, err) {
   if (options.cleanup) {
     if (verbose) console.log('clean');
     /** Do additional clean up here */
+    if (ip) ourBoard.wifiPost(ip, '/command', {'command': 's'});
     ourBoard.removeAllListeners('rawDataPacket');
     ourBoard.removeAllListeners('droppedPacket');
     ourBoard.removeAllListeners('sample');
