@@ -2547,7 +2547,7 @@ function OpenBCIFactory () {
   OpenBCIBoard.prototype.wifiConnectSocket = function (ip, cb) {
     this.curParsingMode = k.OBCIParsingNormal;
     this.wifiPost(ip, '/websocket', {
-      port: this.wifiServer.address().port
+      port: this.wifiGetLocalPort()
     }, cb);
   };
 
@@ -2585,6 +2585,10 @@ function OpenBCIFactory () {
   OpenBCIBoard.prototype.wifiFindShieldsStop = function () {
     if (this.wifiClient) this.wifiClient.stop();
     if (this.ssdpTimeout) clearTimeout(this.ssdpTimeout);
+  };
+
+  OpenBCIBoard.prototype.wifiGetLocalPort = function () {
+    return this.wifiServer.address().port;
   };
 
   OpenBCIBoard.prototype.wifiInitServer = function () {
