@@ -306,9 +306,9 @@ function OpenBCIFactory () {
       } else {
         let connectFun = null;
         if (this.options.simulate || portName === k.OBCISimulatorPortName) {
-          connectFun = this._connectSimulator;
+          connectFun = this._connectSimulator.bind(this);
         } else {
-          connectFun = this._connectUSBDongle(portName);
+          connectFun = this._connectUSBDongle.bind(this);
         }
         connectFun(portName, (err) => {
           if (err) reject(err);

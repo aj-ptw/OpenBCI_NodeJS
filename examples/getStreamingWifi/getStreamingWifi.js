@@ -21,15 +21,41 @@ var ourBoard = new OpenBCIBoard({
   wifi: wifi
 });
 
-ourBoard.on('droppedPacket', console.log);
-// ourBoard.on('rawDataPacket', console.log);
+// ourBoard.on('droppedPacket', console.log);
+ourBoard.on('rawDataPacket', console.log);
+var fs = require('fs');
+var stream = fs.createWriteStream("noiseTest8Channel.txt");
+// stream.once('open', function(fd) {
+//   stream.write("My first row\n");
+//   stream.write("My second row\n");
+//   stream.end();
+// });
 
-ourBoard.on('sample',(sample) => {
+var sentGroundCommand = false;
+var timeOfStart = 0;
+var timeDuration = 10000;
+ourBoard.on('sample1',(sample) => {
   // console.log(sample.sampleNumber);
+  if (!sentGroundCommand) {
+    ourBoard.wifiPost(ip, '/command', {'command': '0'});
+    sentGroundCommand = true;
+    timeOfStart = Date.now();
+  }
   /** Work with sample */
-  // for (let i = 0; i < ourBoard.numberOfChannels(); i++) {
-  //   console.log("Channel " + (i + 1) + ": " + sample.channelData[i].toFixed(8) + " Volts.");
-  // }
+  if ((Date.now() - timeOfStart) > timeDuration) {
+    console.log('Ten seconds is up');
+    process.exit(0);
+  } else {
+    stream.write(sample.sampleNumber.toFixed(0));
+    stream.write(',');
+    for (let i = 0; i < ourBoard.numberOfChannels(); i++) {
+      stream.write(sample.channelData[i].toFixed(10));
+      if (i < ourBoard.numberOfChannels()-1) {
+        stream.write(',');
+      }
+    }
+    stream.write('\n');
+  }
 });
 
 ourBoard.once('wifiShield', (obj) => {
@@ -57,6 +83,7 @@ function exitHandler (options, err) {
     ourBoard.removeAllListeners('droppedPacket');
     ourBoard.removeAllListeners('sample');
     ourBoard.wifiDestroy();
+    stream.end();
   }
   if (err) console.log(err.stack);
   if (options.exit) {

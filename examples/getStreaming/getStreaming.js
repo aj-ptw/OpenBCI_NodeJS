@@ -18,6 +18,9 @@ var ourBoard = new OpenBCIBoard({
   verbose: verbose
 });
 
+// ourBoard.on('rawDataPacket', console.log);
+
+
 ourBoard.autoFindOpenBCIBoard().then(portName => {
   if (portName) {
     /**
@@ -32,7 +35,8 @@ ourBoard.autoFindOpenBCIBoard().then(portName => {
           ourBoard.on('sample',(sample) => {
             /** Work with sample */
             for (var i = 0; i < ourBoard.numberOfChannels(); i++) {
-              console.log("Channel " + (i + 1) + ": " + sample.channelData[i].toFixed(8) + " Volts.");
+              console.log(sample.sampleNumber);
+              // console.log("Channel " + (i + 1) + ": " + sample.channelData[i].toFixed(8) + " Volts.");
               // prints to the console
               //  "Channel 1: 0.00001987 Volts."
               //  "Channel 2: 0.00002255 Volts."
