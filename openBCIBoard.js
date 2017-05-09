@@ -2006,7 +2006,13 @@ function OpenBCIFactory () {
     if (rawDataPacketBuffer.byteLength !== k.OBCIPacketSize) return;
     var missedPacketArray = openBCISample.droppedPacketCheck(this.previousSampleNumber, rawDataPacketBuffer[k.OBCIPacketPositionSampleNumber]);
     if (missedPacketArray && this.previousSampleNumber !== -1) {
-      this.emit(k.OBCIEmitterDroppedPacket, missedPacketArray);
+      if (this.options.wifi && this.previousSampleNumber === rawDataPacketBuffer[k.OBCIPacketPositionSampleNumber]) {
+        if (!this.options.daisy) {
+          this.options.daisy = true;
+        }
+      } else {
+        this.emit(k.OBCIEmitterDroppedPacket, missedPacketArray);
+      }
     }
     this.previousSampleNumber = rawDataPacketBuffer[k.OBCIPacketPositionSampleNumber];
     var packetType = openBCISample.getRawPacketType(rawDataPacketBuffer[k.OBCIPacketPositionStopByte]);
@@ -2291,7 +2297,11 @@ function OpenBCIFactory () {
       //  channels (9-16) come in packets with even sample numbers
       if (this.info.boardType === k.OBCIBoardDaisy) {
         // Send the sample for downstream sample compaction
-        this._finalizeNewSampleForDaisy(sampleObject);
+        if (this.options.wifi) {
+          this._finalizeNewSampleForDaisyWifi(sampleObject);
+        } else {
+          this._finalizeNewSampleForDaisy(sampleObject);
+        }
       } else {
         this.emit(k.OBCIEmitterSample, sampleObject);
       }
@@ -2324,6 +2334,35 @@ function OpenBCIFactory () {
         // Set the _lowerChannelsSampleObject object to null
         this._lowerChannelsSampleObject = null;
         // Emite the new merged sample
+        this.emit('sample', mergedSample);
+      } else {
+        // Missed the odd packet, i.e. two evens in a row
+        this.info.missedPackets++;
+      }
+    }
+  };
+
+  /**
+   * @description This function is called every sample if the boardType is Daisy. The function stores odd sampleNumber
+   *      sample objects to a private global variable called `._lowerChannelsSampleObject`. The method will emit a
+   *      sample object only when the upper channels arrive in an even sampleNumber sample object. No sample will be
+   *      emitted on an even sampleNumber if _lowerChannelsSampleObject is null and one will be added to the
+   *      missedPacket counter. Further missedPacket will increase if two odd sampleNumber packets arrive in a row.
+   * @param sampleObject {Object} - The sample object to finalize
+   * @private
+   * @author AJ Keller (@pushtheworldllc)
+   */
+  OpenBCIBoard.prototype._finalizeNewSampleForDaisyWifi = function (sampleObject) {
+    if (k.isNull(this._lowerChannelsSampleObject)) {
+      this._lowerChannelsSampleObject = sampleObject;
+    } else {
+      // Make sure there is an odd packet waiting to get merged with this packet
+      if (this._lowerChannelsSampleObject.sampleNumber === sampleObject.sampleNumber) {
+        // Merge these two samples
+        var mergedSample = openBCISample.makeDaisySampleObject(this._lowerChannelsSampleObject, sampleObject);
+        // Set the _lowerChannelsSampleObject object to null
+        this._lowerChannelsSampleObject = null;
+        // Emit the new merged sample
         this.emit('sample', mergedSample);
       } else {
         // Missed the odd packet, i.e. two evens in a row
