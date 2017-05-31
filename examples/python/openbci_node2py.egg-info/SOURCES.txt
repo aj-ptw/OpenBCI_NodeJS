@@ -1,0 +1,8 @@
+obci_node2py/__init__.py
+obci_node2py/handoff.py
+openbci_node2py.egg-info/PKG-INFO
+openbci_node2py.egg-info/SOURCES.txt
+openbci_node2py.egg-info/dependency_links.txt
+openbci_node2py.egg-info/not-zip-safe
+openbci_node2py.egg-info/requires.txt
+openbci_node2py.egg-info/top_level.txt

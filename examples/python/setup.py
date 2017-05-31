@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-setup(name='openbci-node-python',
+setup(name='openbci_node2py',
       version='0.0.1',
       description='Node to Python the right way',
       url='',
