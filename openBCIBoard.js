@@ -2647,7 +2647,7 @@ function OpenBCIFactory () {
       });
     });
 
-    req.on('error', (e) => {
+    req.once('error', (e) => {
       if (this.options.verbose) console.log(`problem with request: ${e.message}`);
       if (cb) cb(e);
     });
