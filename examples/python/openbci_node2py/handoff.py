@@ -8,7 +8,7 @@ class Interface:
     def __init__(self, port=3000, verbose=False):
         context = zmq.Context()
         self._socket = context.socket(zmq.PAIR)
-        self._socket.connect("tcp://localhost:%d" % port)
+        self._socket.connect("tcp://localhost:" + str(port))
 
         self.verbose = verbose
 
@@ -79,43 +79,46 @@ class Stream:
 
         self.signal = RingBuffer(np.zeros((nb_chans + 1, buffer_size)))
 
-        def start(self, interface=self.interface, signal=self.signal):
+        self.start = self.start
 
-            while True:
-                msg = interface.recv()
-                try:
-                    dicty = json.loads(msg)
-                    action = dicty.get('action')
-                    command = dicty.get('command')
-                    message = dicty.get('message')
+    def start(self):
 
-                    if command == 'sample':
-                        if action == 'process':
-                            # Do sample processing here
-                            try:
-                                if type(message) is not dict:
-                                    print "sample is not a dict", message
-                                    raise ValueError
-                                # Get keys of sample
-                                data = np.zeros(9)
+        while True:
+            msg = self.interface.recv()
+            try:
+                dicty = json.loads(msg)
+                action = dicty.get('action')
+                command = dicty.get('command')
+                message = dicty.get('message')
 
-                                data[:-1] = message.get('channelData')
-                                data[-1] = message.get('timeStamp')
+                if command == 'sample':
+                    if action == 'process':
+                        # Do sample processing here
+                        try:
+                            if type(message) is not dict:
+                                print "sample is not a dict", message
+                                raise ValueError
+                            # Get keys of sample
+                            data = np.zeros(9)
 
-                                # Add data to end of ring buffer
-                                self.signal.append(data)
+                            data[:-1] = message.get('channelData')
+                            data[-1] = message.get('timeStamp')
 
-                                print message.get('sampleNumber', data)
+                            # Add data to end of ring buffer
+                            self.signal.append(data)
 
-                            except ValueError as e:
-                                print e
-                    elif command == 'status':
-                        if action == 'active':
-                            interface.send(json.dumps({
-                                'action': 'alive',
-                                'command': 'status',
-                                'message': time.time() * 1000.0
-                            }))
+                            print(data)
+                            print message.get('sampleNumber', data)
 
-                except BaseException as e:
-                    print e
+                        except ValueError as e:
+                            print e
+                elif command == 'status':
+                    if action == 'active':
+                        interface.send(json.dumps({
+                            'action': 'alive',
+                            'command': 'status',
+                            'message': time.time() * 1000.0
+                        }))
+
+            except BaseException as e:
+                print e
