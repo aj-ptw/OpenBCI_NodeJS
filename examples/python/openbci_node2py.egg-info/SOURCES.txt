@@ -1,5 +1,5 @@
-obci_node2py/__init__.py
-obci_node2py/handoff.py
+openbci_node2py/__init__.py
+openbci_node2py/handoff.py
 openbci_node2py.egg-info/PKG-INFO
 openbci_node2py.egg-info/SOURCES.txt
 openbci_node2py.egg-info/dependency_links.txt

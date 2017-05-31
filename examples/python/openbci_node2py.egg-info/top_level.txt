@@ -1,1 +1,1 @@
-obci_node2py
+openbci_node2py

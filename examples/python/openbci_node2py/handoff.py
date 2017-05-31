@@ -8,7 +8,7 @@ class Interface:
     def __init__(self, port=3000, verbose=False):
         context = zmq.Context()
         self._socket = context.socket(zmq.PAIR)
-        self._socket.connect("tcp://localhost:" + str(port))
+        self._socket.connect("tcp://localhost:%d" % port)
 
         self.verbose = verbose
 
@@ -75,7 +75,7 @@ class Stream:
         self.buffer_size = buffer_size
 
         #cCreate a new python interface.
-        self.interface = Interface(verbose=verbose)
+        self.interface = Interface(port=port, verbose=verbose)
 
         self.signal = RingBuffer(np.zeros((nb_chans + 1, buffer_size)))
 

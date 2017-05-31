@@ -18,7 +18,7 @@ var debug = false; // Pretty print any bytes in and out... it's amazing...
 var verbose = true; // Adds verbosity to functions
 
 var ourBoard = new OpenBCIBoard({
-  // simulate: simulate, // Uncomment to see how it works with simulator!
+  simulate: simulate, // Uncomment to see how it works with simulator!
   simulatorFirmwareVersion: 'v2',
   debug: debug,
   verbose: verbose
@@ -182,6 +182,7 @@ function exitHandler (options, err) {
   if (options.exit) {
     if (verbose) console.log('exit');
     ourBoard.disconnect().catch(console.log);
+    process.exit();
   }
 }
 
