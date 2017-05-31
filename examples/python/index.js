@@ -181,7 +181,7 @@ function exitHandler (options, err) {
   if (err) console.log(err.stack);
   if (options.exit) {
     if (verbose) console.log('exit');
-    ourBoard.disconnect().catch(console.log);
+    if (ourBoard.isConnected()) ourBoard.disconnect().catch(console.log);
     process.exit();
   }
 }
