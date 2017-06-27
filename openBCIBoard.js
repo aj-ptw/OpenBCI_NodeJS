@@ -12,6 +12,7 @@ var math = require('mathjs');
 const ssdp = require('node-ssdp').Client;
 const http = require('http');
 const net = require('net');
+const ip = require('ip');
 
 /**
 * @description SDK for OpenBCI Board {@link www.openbci.com}
@@ -2544,9 +2545,11 @@ function OpenBCIFactory () {
     return channelSettingsObject.POWER_DOWN.toString().localeCompare('1') === 1;
   };
 
-  OpenBCIBoard.prototype.wifiConnectSocket = function (ip, cb) {
+  OpenBCIBoard.prototype.wifiConnectSocket = function (shieldIP, cb) {
     this.curParsingMode = k.OBCIParsingNormal;
-    this.wifiPost(ip, '/websocket', {
+    this.wifiPost(shieldIP, '/tcp', {
+      ip: ip.address(),
+      output: "json",
       port: this.wifiGetLocalPort()
     }, cb);
   };

@@ -58,18 +58,37 @@ ourBoard.on('sample1',(sample) => {
   }
 });
 
+var socket;
 ourBoard.once('wifiShield', (obj) => {
   ip = obj.rinfo.address;
   ourBoard.wifiFindShieldsStop();
-  ourBoard.connect(ip)
-    .then(() => {
-      ourBoard.wifiPost(ip, '/command', {'command': '[b'});
-      // ourBoard.wifiPost(ip, '/command', {'command': '>'});
-      console.log('connected');
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  socket = require('socket.io-client')(`http://${ip}:81`);
+  socket.on('connect', function(){
+    console.log("connected!");
+  });
+  socket.on('event', function(data){
+    console.log(data.toString());
+  });
+  socket.on('disconnect', function(){
+    console.log("web socket disconnected");
+    process.exit(0);
+  });
+  socket.on("error", function (err) {
+    console.log('error', err);
+    process.exit(1);
+  });
+  socket.on('openbci', function(data) {
+    console.log(data.toString());
+  });
+  // ourBoard.connect(ip)
+  //   .then(() => {
+  //     ourBoard.wifiPost(ip, '/command', {'command': '[b'});
+  //     // ourBoard.wifiPost(ip, '/command', {'command': '>'});
+  //     console.log('connected');
+  //   })
+  //   .catch((err) => {
+  //     console.log(err);
+  //   });
 });
 
 ourBoard.wifiFindShieldsStart();
