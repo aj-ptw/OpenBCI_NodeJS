@@ -11,12 +11,16 @@
  */
 var debug = false; // Pretty print any bytes in and out... it's amazing...
 var verbose = true; // Adds verbosity to functions
-
+var fs = require('fs');
+var stream = fs.createWriteStream("noiseTest8ChannelBlueTooth.txt");
 var OpenBCIBoard = require('openbci').OpenBCIBoard;
 var ourBoard = new OpenBCIBoard({
   debug: debug,
   verbose: verbose
 });
+var sentGroundCommand = false;
+var timeOfStart = 0;
+var timeDuration = 15000;
 
 ourBoard.autoFindOpenBCIBoard().then(portName => {
   if (portName) {
@@ -30,15 +34,35 @@ ourBoard.autoFindOpenBCIBoard().then(portName => {
         ourBoard.on('ready',() => {
           ourBoard.streamStart();
           ourBoard.on('sample',(sample) => {
-            /** Work with sample */
-            for (var i = 0; i < ourBoard.numberOfChannels(); i++) {
-              console.log("Channel " + (i + 1) + ": " + sample.channelData[i].toFixed(8) + " Volts.");
-              // prints to the console
-              //  "Channel 1: 0.00001987 Volts."
-              //  "Channel 2: 0.00002255 Volts."
-              //  ...
-              //  "Channel 8: -0.00001875 Volts."
+            if (!sentGroundCommand) {
+              ourBoard.testSignal('ground');
+              sentGroundCommand = true;
+              timeOfStart = Date.now();
             }
+            /** Work with sample */
+            if ((Date.now() - timeOfStart) > timeDuration) {
+              console.log('Ten seconds is up');
+              process.exit(0);
+            } else {
+              stream.write(sample.sampleNumber.toFixed(0));
+              stream.write(',');
+              for (let i = 0; i < ourBoard.numberOfChannels(); i++) {
+                stream.write(sample.channelData[i].toFixed(10));
+                if (i < ourBoard.numberOfChannels()-1) {
+                  stream.write(',');
+                }
+              }
+              stream.write('\n');
+            }
+            /** Work with sample */
+            // for (var i = 0; i < ourBoard.numberOfChannels(); i++) {
+            //   console.log("Channel " + (i + 1) + ": " + sample.channelData[i].toFixed(8) + " Volts.");
+            //   // prints to the console
+            //   //  "Channel 1: 0.00001987 Volts."
+            //   //  "Channel 2: 0.00002255 Volts."
+            //   //  ...
+            //   //  "Channel 8: -0.00001875 Volts."
+            // }
           });
         });
       });

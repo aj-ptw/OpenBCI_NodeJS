@@ -22,7 +22,7 @@ var ourBoard = new OpenBCIBoard({
 });
 
 // ourBoard.on('droppedPacket', console.log);
-ourBoard.on('rawDataPacket', console.log);
+// ourBoard.on('rawDataPacket', console.log);
 var fs = require('fs');
 var stream = fs.createWriteStream("noiseTest8Channel.txt");
 // stream.once('open', function(fd) {
@@ -33,29 +33,38 @@ var stream = fs.createWriteStream("noiseTest8Channel.txt");
 
 var sentGroundCommand = false;
 var timeOfStart = 0;
-var timeDuration = 10000;
-ourBoard.on('sample1',(sample) => {
+var timeDuration = 150000;
+ourBoard.on('sample',(sample) => {
+  console.log(Date.now());
   // console.log(sample.sampleNumber);
+  // console.log(sample.channelData);
   if (!sentGroundCommand) {
-    ourBoard.wifiPost(ip, '/command', {'command': '0'});
+
     sentGroundCommand = true;
     timeOfStart = Date.now();
   }
-  /** Work with sample */
+  // /** Work with sample */
   if ((Date.now() - timeOfStart) > timeDuration) {
     console.log('Ten seconds is up');
-    process.exit(0);
-  } else {
-    stream.write(sample.sampleNumber.toFixed(0));
-    stream.write(',');
-    for (let i = 0; i < ourBoard.numberOfChannels(); i++) {
-      stream.write(sample.channelData[i].toFixed(10));
-      if (i < ourBoard.numberOfChannels()-1) {
-        stream.write(',');
+    ourBoard.wifiPost(ip, '/command', {'command': 's'}, (err) => {
+      if (err) {
+        console.log('err', err);
       }
-    }
-    stream.write('\n');
-  }
+      process.exit(0);
+    })
+
+
+  } //else {
+  //   stream.write(sample.sampleNumber.toFixed(0));
+  //   stream.write(',');
+  //   for (let i = 0; i < ourBoard.numberOfChannels(); i++) {
+  //     stream.write(sample.channelData[i].toFixed(10));
+  //     if (i < ourBoard.numberOfChannels()-1) {
+  //       stream.write(',');
+  //     }
+  //   }
+  //   stream.write('\n');
+  // }
 });
 
 ourBoard.once('wifiShield', (obj) => {
