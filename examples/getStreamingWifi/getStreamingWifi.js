@@ -67,21 +67,24 @@ ourBoard.on('sample',(sample) => {
   // }
 });
 
-ourBoard.once('wifiShield', (obj) => {
-  ip = obj.rinfo.address;
-  ourBoard.wifiFindShieldsStop();
-  ourBoard.connect(ip)
-    .then(() => {
-      ourBoard.wifiPost(ip, '/command', {'command': '[b'});
-      // ourBoard.wifiPost(ip, '/command', {'command': '>'});
-      console.log('connected');
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-});
+// ourBoard.once('wifiShield', (obj) => {
+//   ip = obj.rinfo.address;
+//   ourBoard.wifiFindShieldsStop();
+//
+// });
+//
+// ourBoard.wifiFindShieldsStart();
 
-ourBoard.wifiFindShieldsStart();
+const shield_uuid = "openbci-2af1.local";
+ourBoard.connect(shield_uuid)
+  .then(() => {
+    ourBoard.wifiPost(shield_uuid, '/command', {'command': '[b'});
+    // ourBoard.wifiPost(ip, '/command', {'command': '>'});
+    console.log('connected');
+  })
+  .catch((err) => {
+    console.log(err);
+  });
 
 function exitHandler (options, err) {
   if (options.cleanup) {

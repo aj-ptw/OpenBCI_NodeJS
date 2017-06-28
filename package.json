@@ -18,6 +18,7 @@
     "buffer-equal": "^1.0.0",
     "gaussian": "^1.0.0",
     "ip": "^1.1.5",
+    "json-stream": "^1.0.0",
     "libnmap": "^0.3.9",
     "mathjs": "^3.3.0",
     "node-ssdp": "^3.2.1",

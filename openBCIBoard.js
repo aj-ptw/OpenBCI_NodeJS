@@ -9,6 +9,8 @@ var openBCISimulator = require('./openBCISimulator');
 var Sntp = require('sntp');
 var bufferEqual = require('buffer-equal');
 var math = require('mathjs');
+var JSONStream = require('json-stream');
+var streamJSON = JSONStream();
 const ssdp = require('node-ssdp').Client;
 const http = require('http');
 const net = require('net');
@@ -2551,12 +2553,21 @@ function OpenBCIFactory () {
       ip: ip.address(),
       output: "json",
       port: this.wifiGetLocalPort(),
-      delimiter: "\r\n"
+      delimiter: "\r\n",
+      latency: "50000"
     }, cb);
+  };
+
+  OpenBCIBoard.prototype.wifiClientCreate = function () {
+    this.wifiClient = new ssdp({});
   };
 
   OpenBCIBoard.prototype.wifiDestroy = function () {
     this.wifiServer = null;
+    if (this.wifiClient) {
+      this.wifiClient.stop();
+    }
+    this.wifiClient = null;
   };
 
   OpenBCIBoard.prototype.wifiFindShieldsStart = function (timeout, attempts) {
@@ -2599,29 +2610,53 @@ function OpenBCIFactory () {
     let persistentBuffer = null;
     const delimBuf = new Buffer("\r\n");
     this.wifiServer = net.createServer((socket) => {
+      streamJSON.on("data", (sample) => {
+        console.log(sample);
+      });
       socket.on('data', (data) => {
         // this._processBytes(data);
+        streamJSON.write(data);
+        // if (persistentBuffer !== null) persistentBuffer = Buffer.concat([persistentBuffer, data]);
+        // else persistentBuffer = data;
 
-        if (persistentBuffer !== null) persistentBuffer = Buffer.concat([persistentBuffer, data]);
-        else persistentBuffer = data;
+        // if (persistentBuffer) {
+        //   let bytesIn = persistentBuffer.byteLength;
+        //   if (bytesIn > 2) {
+        //     let head = 2;
+        //     let tail = 0;
+        //     while (head < bytesIn - 2) {
+        //       if (delimBuf.compare(persistentBuffer, head-2, head) === 0) {
+        //         try {
+        //           const obj = JSON.parse(persistentBuffer.slice(tail, head-2));
+        //           console.log(obj.chunk);
+        //           if (head < bytesIn - 2) {
+        //             tail = head;
+        //           }
+        //         } catch (e) {
+        //           console.log(persistentBuffer.slice(tail, head-2).toString());
+        //           persistentBuffer = persistentBuffer.slice(head);
+        //           return;
+        //         }
+        //
+        //       }
+        //       head++;
+        //     }
+        //
+        //     if (tail < bytesIn - 2) {
+        //       persistentBuffer = persistentBuffer.slice(tail);
+        //     } else {
+        //       persistentBuffer = null;
+        //     }
+        //
+        //   }
+        // }
 
-        if (persistentBuffer.byteLength > 2) {
-          for (let i = 2; i < persistentBuffer.byteLength-1; i++) {
-            if (delimBuf.compare(persistentBuffer, i-1, i) === 0) {
-              console.log(persistentBuffer.slice(0, i-2).toString());
-              if (i < persistentBuffer.byteLength - 2) {
-                persistentBuffer = persistentBuffer.slice(i+1, persistentBuffer.byteLength);
-              } else {
-                persistentBuffer = null;
-              }
-            }
-          }
-        }
       });
       socket.on('error', (err) => {
         if (this.options.verbose) console.log('SSDP:',err);
       });
     }).listen();
+    if (this.options.verbose) console.log("Server on port: ", this.wifiGetLocalPort());
   };
 
   OpenBCIBoard.prototype.wifiProcessResponse = function (res, cb) {

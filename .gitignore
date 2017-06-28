@@ -43,3 +43,6 @@ hardwareVoltageOutputAll.txt
 
 # Text editor temporary files
 .*.sw* # vi/vim
+
+package-lock.json
+
