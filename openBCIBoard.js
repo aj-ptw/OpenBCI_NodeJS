@@ -2550,7 +2550,8 @@ function OpenBCIFactory () {
     this.wifiPost(shieldIP, '/tcp', {
       ip: ip.address(),
       output: "json",
-      port: this.wifiGetLocalPort()
+      port: this.wifiGetLocalPort(),
+      delimiter: "\r\n"
     }, cb);
   };
 
@@ -2595,9 +2596,27 @@ function OpenBCIFactory () {
   };
 
   OpenBCIBoard.prototype.wifiInitServer = function () {
+    let persistentBuffer = null;
+    const delimBuf = new Buffer("\r\n");
     this.wifiServer = net.createServer((socket) => {
       socket.on('data', (data) => {
-        this._processBytes(data);
+        // this._processBytes(data);
+
+        if (persistentBuffer !== null) persistentBuffer = Buffer.concat([persistentBuffer, data]);
+        else persistentBuffer = data;
+
+        if (persistentBuffer.byteLength > 2) {
+          for (let i = 2; i < persistentBuffer.byteLength-1; i++) {
+            if (delimBuf.compare(persistentBuffer, i-1, i) === 0) {
+              console.log(persistentBuffer.slice(0, i-2).toString());
+              if (i < persistentBuffer.byteLength - 2) {
+                persistentBuffer = persistentBuffer.slice(i+1, persistentBuffer.byteLength);
+              } else {
+                persistentBuffer = null;
+              }
+            }
+          }
+        }
       });
       socket.on('error', (err) => {
         if (this.options.verbose) console.log('SSDP:',err);
